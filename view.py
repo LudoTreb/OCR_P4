@@ -2,8 +2,6 @@
 
 import sys, os
 
-menu_action = ["1", "2", "3", "4"]
-
 
 # sub_menu = """Choissisez parmi les actions suivante :
 # 1: Ajouter les joueurs.
@@ -31,24 +29,31 @@ Que souhaitez-vous faire : """
         return user_action
 
 
-def add_player():
-    print("Information  tournoi")
-    last_name_player = input(f"nom du joueur :")
-    gender_player = input(f"sexe du joueur :")
-    rank_player = input(f"classemnt du joueur :")
+def add_player(player_number):
+    print(f"Information joueur_{player_number} : ")
+    last_name_player = input(f"Nom du joueur : ")
+    first_name_player = input(f"Prénom du joueur : ")
+    birth_date_player = input(f"Date de naissance du joueur : ")
+    gender_player = input(f"sexe du joueur : ")
+    rank_player = input(f"classemnt du joueur : ")
+    score_player = input(f"Score du joueur [0] : ")
+    print("-" * 50)
 
     return {
         "last_name": last_name_player,
+        "first_name": first_name_player,
+        "birth_date": birth_date_player,
         "gender": gender_player,
-        "rank": rank_player
+        "rank": rank_player,
+        "score": score_player
     }
 
 
 def fill_information_tournament():
-    name_tournament = input("nom du tournoi:")
-    localisation_tournament = input("lieu du tournoi:")
-    date_tournament = input("date du tournoi:")
-    number_round_tournament = input("nombre de round du tournoi [4]: ")
+    name_tournament = input("nom du tournoi : ")
+    localisation_tournament = input("lieu du tournoi : ")
+    date_tournament = input("date du tournoi : ")
+    number_round_tournament = input("nombre de round du tournoi [4] : ")
 
     return {
         "name": name_tournament,
@@ -57,25 +62,57 @@ def fill_information_tournament():
         "number_round": number_round_tournament
     }
 
-# while True:
-#     user_action = ""
-#     while user_action not in menu_action:
-#         user_action = input(menu)
-#         if user_action not in menu_action:
-#             print("Veuillez choisir une action valide")
-#     if user_action == "1":
-#         os.system("clear")
-#         fill_information_tournament()
-#         user_action = input(sub_menu)
-#         if user_action not in menu_action:
-#             print("Veuillez choisir une action valide")
-#         elif user_action == "1":
-#             print("under construction")
-#
-#     elif user_action == "2":
-#         print("script en cours de construction")
-#     elif user_action == "3":
-#         print("script en cours de construction")
-#     elif user_action == "4":
-#         print(" A bientôt !")
-#         sys.exit()
+
+def display_tournament_created_message(new_tournament):
+    print("-" * 50)
+    print("Tournoi a bien été crée : ")
+    print(new_tournament.__dict__)
+    print("-" * 50 + "\n" + "-" * 50)
+
+
+def display_player_created_message(list_player):
+    print("-" * 50)
+    print("Les joueurs ont bien été saisis : ")
+    for player in list_player:
+        print(f"{player.first_name}, rank: {player.rank}, score: {player.score}")
+    print("-" * 50 + "\n" + "-" * 50)
+
+
+def display_round_created_message():
+    """ Affiche les informations du round
+    - numero de round
+    - quel joueur affronte quel joueur
+    - le score des joueurs
+    """
+    pass
+
+
+def display_round_results_message(round_matches, list_scores):
+    """ Affiche les resultats du round
+    - numero de tournoi
+    - quel joueur à gagner contre quel joueur
+    - le score des joureurs mise à jour
+    """
+    print("-" * 50 + "\n" + "-" * 50)
+
+    print(f"Résumé du Round {int(round_matches[0].name) + 1}:")
+    for number_match, score in enumerate(list_scores):
+        print(f"Match {number_match + 1}: {score[0][0]} contre {score[1][0]} ")
+        if score[0][1] and score[1][1] == "0,5":
+            print(f"Résultat : Match nul {score[0]}, {score[1]}")
+        elif score[0][1] == "1":
+            print(f"Résultat : {score[0]} victoire")
+        else:
+            print(f"Résultat : {score[1]} victoire")
+
+        print("-" * 50)
+
+
+def enter_results(pair_player):  # tuple d'instance de joueur
+    print("Pour rappel:  victoire = 1, défaite = 0, match nul =  0,5")
+    scores = []
+    for player in pair_player:
+        player_score = (player, input("score du joueur : "))
+        scores.append(player_score)
+
+    return scores

@@ -22,6 +22,7 @@ class Player:
 
 
 class Tournament:
+    rounds = []
     def __init__(self, name, location, date, number_round):
         """
         Initialise le nom, le lieu, la date du tournoi
@@ -59,17 +60,21 @@ class Tournament:
 
 
 class Match:
-    def __init__(self, name, players):
+    def __init__(self, name, list_players):
         """
         Initialise le nom du match
         :param name:
         """
         self.name = name
-        self.players = players
+        self.players = [
+            [i, 0]
+            for i in list_players
+        ]
 
 
 class Round:
-    def __init__(self, name, date, matches_round, end_time, status="ongoing"):
+    end_time = None
+    def __init__(self, name, date, matches_round, status="ongoing"):
         """
         Initialise le nom, la date, l'heure de fin, l'état
         :param name:
@@ -80,5 +85,4 @@ class Round:
         self.name = name
         self.date = date
         self.matches_round = matches_round
-        self.end_time = end_time
         self.status = status
