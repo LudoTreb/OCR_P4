@@ -13,11 +13,12 @@ list_players = []
 
 
 def sort_descending_rank(list_players) -> list:
-    list_players_rank = []
-    for player in list_players:
-        list_players_rank.append(player.rank)
-    list_players_rank_sorted = sorted(list_players_rank, reverse=True)
-    return list_players_rank_sorted
+    list_players_rank_sorted = sorted(list_players, key=lambda player: player.rank, reverse=True)
+    return list_players_rank_sorted # exemple: [
+                                                # <models.Player object at 0x109763dc0>,
+                                                # <models.Player object at 0x1097638b0>,
+                                                # <models.Player object at 0x109763df0>,
+                                                # <models.Player object at 0x109763d90>]
 
 
 def split_list_player(list_players):
@@ -25,7 +26,10 @@ def split_list_player(list_players):
     middle_index = length // 2
     first_half_list_players = list_players[:middle_index]
     second_half_list_players = list_players[middle_index:]
-    return first_half_list_players, second_half_list_players
+    return first_half_list_players, second_half_list_players # exemple: ([<models.Player object at 0x10b05bdc0>,
+                                                                        # <models.Player object at 0x10b05b8b0>],
+                                                                        # [<models.Player object at 0x10b05bdf0>,
+                                                                        # <models.Player object at 0x10b05bd90>])
 
 
 def create_round(name, matches_round):
@@ -50,7 +54,8 @@ def pairing_player_round_1(list_players):
         pair_player = (player_1, player_2)
         list_pairs.append(pair_player)
 
-    return list_pairs
+    return list_pairs # exemple : [(<models.Player object at 0x108bd7dc0>, <models.Player object at 0x108bd7df0>),
+                                # (<models.Player object at 0x108bd78b0>, <models.Player object at 0x108bd7d90>)]
 
 
 def pairing_player():
@@ -85,12 +90,36 @@ def add_players(numbers_player):
                         player_details["rank"],
                         )
         list_players.append(player)
-    return list_players
 
 
 def add_match(match_number, list_players):
     new_match = Match(match_number, list_players)
     return new_match
+
+
+def enter_result_2(round_matches):
+    """
+    on veut en sortie une liste de tuple
+    """
+    list_players_with_score = []
+    for match in round_matches:
+        scores = enter_results(match.players)
+        match.players_scores = scores
+
+    list_players_with_score.extend(scores)
+    return list_players_with_score
+
+    print(f"scores: {match.players_scores}")
+
+
+def update_player_score(pair_player):
+
+    for player in pair_player:
+        if player[1] == "0,5":
+            score_in_dot = player[1].replace(",",".")
+            player[0].score += float(score_in_dot)
+        else:
+            player[0].score += float(player[1])
 
 
 def run():
@@ -105,38 +134,52 @@ def run():
                                     tournament_details["number_round"])
         display_tournament_created_message(new_tournament)
         add_players(numbers_player)
+        #print(list_players) # test --> [<models.Player object at 0x10100d900>,
+                                        # <models.Player object at 0x10100cdc0>,
+                                        # <models.Player object at 0x10100dab0>,
+                                        # <models.Player object at 0x10100f1f0>]
         display_player_created_message(list_players)
 
         for round_number in range(1, int(new_tournament.number_round) + 1):
             if round_number == 1:
                 list_pairs = pairing_player_round_1(list_players)
+                # print(list_pairs) # test --> [(<models.Player object at 0x10100dab0>, <models.Player object at 0x10100cdc0>),
+                                            # (<models.Player object at 0x10100f1f0>, <models.Player object at 0x10100d900>)]
 
             else:
                 # algo des autres rounds
                 print("algo next round à faire\n")
-                # list_pairs = pairing_player(list_players) 
+                # list_pairs = pairing_player(list_players)
 
                 break
 
             round_matches = []
             for match_number, pair in enumerate(list_pairs):
+                # print(f"match_number: {match_number}, pair: {pair}") # test --> match_number: 0, pair: (<models.Player object at 0x10100dab0>,
+                                                                                                    # <models.Player object at 0x10100cdc0>)
                 match = add_match(match_number, pair)
+                # print(f"match: {match}")  # test --> ex: <models.Match object at 0x10100ceb0>
                 round_matches.append(match)
+                #print(f"round_matches: {round_matches}")  # test --> ex: [<models.Match object at 0x10100ceb0>,
+                                                                    # <models.Match object at 0x10100f1c0>]
             round = create_round(round_number, round_matches)
+            # print(f"round: {round}")  # test --> <models.Round object at 0x10100da50>
             new_tournament.rounds.append(round)
+            #print(f"new_tournament: {new_tournament}") # test --> <models.Tournament object at 0x101093010>
 
             # rentre resultat
-            list_scores = []
             for match in round_matches:
                 scores = enter_results(match.players)
-                match.players_scores = scores
-                list_scores.append(match.players_scores)
-                print(f"scores: {match.players_scores}")
+                update_player_score(match.players)
+                #print(f"scores: {scores}")  # test --> ex: [[<models.Player object at 0x1012e00d0>, '0,5'],
+                                                        # [<models.Player object at 0x1012e00a0>, '0,5']]
 
-        display_round_results_message(round_matches, list_scores)
+        #print(f"round_matches :{round_matches}") # test --> ex: [<models.Match object at 0x100f7fee0>,
+                                                            # <models.Match object at 0x100f7fe80>]
+        #print(f"test_round_matches_players: {round_matches[0].players}") # test --> ex: [[<models.Player object at 0x102771000>],
+                                                                                    # [<models.Player object at 0x102771030>]]
 
-
-
+        display_round_results_message(round_matches)
 
 
 

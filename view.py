@@ -87,7 +87,7 @@ def display_round_created_message():
     pass
 
 
-def display_round_results_message(round_matches, list_scores):
+def display_round_results_message(round_matches):  # j'ai enlever le parametre "list_scores"
     """ Affiche les resultats du round
     - numero de tournoi
     - quel joueur à gagner contre quel joueur
@@ -96,23 +96,25 @@ def display_round_results_message(round_matches, list_scores):
     print("-" * 50 + "\n" + "-" * 50)
 
     print(f"Résumé du Round {int(round_matches[0].name) + 1}:")
-    for number_match, score in enumerate(list_scores):
-        print(f"Match {number_match + 1}: {score[0][0]} contre {score[1][0]} ")
-        if score[0][1] and score[1][1] == "0,5":
-            print(f"Résultat : Match nul {score[0]}, {score[1]}")
-        elif score[0][1] == "1":
-            print(f"Résultat : {score[0]} victoire")
+    for number_match, round in enumerate(round_matches):
+        print(
+            f"Match {number_match + 1}: {round.players[0][0].last_name} contre {round.players[1][0].last_name} ")
+        if round.players[0][1] == "0.5" or round.players[0][1] == "0,5":
+            print(f"Résultat : Match nul  avec un score de {round.players[0][0].score}")
+        elif round.players[0][1] == "1":
+            print(
+                f"Résultat : Victoire de {round.players[0][0].last_name} avec un score de {round.players[0][0].score}")
         else:
-            print(f"Résultat : {score[1]} victoire")
+            print(f"Résultat : Victoire de {round.players[1][0].last_name}")
 
         print("-" * 50)
 
 
 def enter_results(pair_player):  # tuple d'instance de joueur
-    print("Pour rappel:  victoire = 1, défaite = 0, match nul =  0,5")
-    scores = []
+    print("Pour rappel:  victoire = 1, défaite = 0, match nul =  0.5")
+    # print(f"pair_player: {pair_player}")  # test --> [[<models.Player object at 0x10449c2b0>, 0],
+    # [<models.Player object at 0x10449c280>, 0]]
     for player in pair_player:
-        player_score = (player, input("score du joueur : "))
-        scores.append(player_score)
+        player[1] = input(f"score du joueur, {player[0].last_name} : ")
 
-    return scores
+    return pair_player
