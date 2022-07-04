@@ -87,7 +87,7 @@ def display_round_created_message():
     pass
 
 
-def display_round_results_message(round_matches):  # j'ai enlever le parametre "list_scores"
+def display_round_results_message(round_matches, round):  # j'ai enlever le parametre "list_scores"
     """ Affiche les resultats du round
     - numero de tournoi
     - quel joueur à gagner contre quel joueur
@@ -95,15 +95,15 @@ def display_round_results_message(round_matches):  # j'ai enlever le parametre "
     """
     print("-" * 50 + "\n" + "-" * 50)
 
-    print(f"Résumé du Round {int(round_matches[0].name) + 1}:")
+    print(f"Résumé du Round {round.name}:") # <-- à checker c'est pas normal le result de ce print
     for number_match, round in enumerate(round_matches):
         print(
             f"Match {number_match + 1}: {round.players[0][0].last_name} contre {round.players[1][0].last_name} ")
         if round.players[0][1] == "0.5" or round.players[0][1] == "0,5":
-            print(f"Résultat : Match nul  avec un score de {round.players[0][0].score}")
+            print(f"Résultat : Match nul")
         elif round.players[0][1] == "1":
             print(
-                f"Résultat : Victoire de {round.players[0][0].last_name} avec un score de {round.players[0][0].score}")
+                f"Résultat : Victoire de {round.players[0][0].last_name}")
         else:
             print(f"Résultat : Victoire de {round.players[1][0].last_name}")
 

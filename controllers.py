@@ -8,8 +8,10 @@ from view import fill_information_tournament, display_main_menu, add_player, dis
     display_player_created_message, enter_results, display_round_results_message
 
 numbers_player = 4
+numbers_round = 3
 new_tournament = None
 list_players = []
+players_playing =[] # liste temporaire cntenant l'instance de joueur et son score lors round
 
 
 def sort_descending_rank(list_players) -> list:
@@ -58,7 +60,7 @@ def pairing_player_round_1(list_players):
                                 # (<models.Player object at 0x108bd78b0>, <models.Player object at 0x108bd7d90>)]
 
 
-def pairing_player():
+def pairing_player(players_playing):
     """
     Pair_1 = Le gagnant d'un match rencontre le gagnant de l'autre match
     Pair_2 = les deux autres joureurs
@@ -66,7 +68,21 @@ def pairing_player():
 
     :return:
     """
-    pass
+    list_pairs = []
+    list_winner = []
+    list_looser = []
+    for i in range(len(players_playing)):
+
+        if players_playing[i][1] == "1":
+            list_winner.append(players_playing[i][0])
+
+        else:
+            list_looser.append(players_playing[i][0])
+
+        list_pairs = [tuple(list_winner), tuple(list_looser)]
+
+    return list_pairs
+
 
 
 def update_score():
@@ -148,11 +164,9 @@ def run():
 
             else:
                 # algo des autres rounds
-                print("algo next round à faire\n")
-                # list_pairs = pairing_player(list_players)
+                list_pairs = pairing_player(players_playing)
 
-                break
-
+            print(f"list_pairs:{len({list_pairs})} {list_pairs}, pour le round: {round_number}") # test -->
             round_matches = []
             for match_number, pair in enumerate(list_pairs):
                 # print(f"match_number: {match_number}, pair: {pair}") # test --> match_number: 0, pair: (<models.Player object at 0x10100dab0>,
@@ -167,19 +181,25 @@ def run():
             new_tournament.rounds.append(round)
             #print(f"new_tournament: {new_tournament}") # test --> <models.Tournament object at 0x101093010>
 
-            # rentre resultat
+            # rentre les resultats
             for match in round_matches:
                 scores = enter_results(match.players)
+                # print(f"scores: {scores}")  # test --> ex: [[<models.Player object at 0x1012e00d0>, '0,5'],
+                #                                             [<models.Player object at 0x1012e00a0>, '0,5']]
                 update_player_score(match.players)
-                #print(f"scores: {scores}")  # test --> ex: [[<models.Player object at 0x1012e00d0>, '0,5'],
-                                                        # [<models.Player object at 0x1012e00a0>, '0,5']]
+                if round.name != numbers_round:
+                    for player in scores:
+                        players_playing.append(player)
+                else:
+                    # affiche rapport
+                    pass
 
         #print(f"round_matches :{round_matches}") # test --> ex: [<models.Match object at 0x100f7fee0>,
                                                             # <models.Match object at 0x100f7fe80>]
         #print(f"test_round_matches_players: {round_matches[0].players}") # test --> ex: [[<models.Player object at 0x102771000>],
                                                                                     # [<models.Player object at 0x102771030>]]
 
-        display_round_results_message(round_matches)
+            display_round_results_message(round_matches, round)
 
 
 
