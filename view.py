@@ -29,7 +29,7 @@ Que souhaitez-vous faire : """
         return user_action
 
 
-def add_player(player_number):
+def fill_information_player(player_number):
     print(f"Information joueur_{player_number} : ")
     last_name_player = input(f"Nom du joueur : ")
     first_name_player = input(f"Prénom du joueur : ")
@@ -111,10 +111,11 @@ def display_round_results_message(round_matches, round):  # j'ai enlever le para
 
 
 def enter_results(pair_player):  # tuple d'instance de joueur
-    print("Pour rappel:  victoire = 1, défaite = 0, match nul =  0.5")
+    print("Pour rappel des notations des scores :\nvictoire = 1, défaite = 0, match nul =  0.5")
+    print("Veuillez rentrer le score du joueur : ")
     # print(f"pair_player: {pair_player}")  # test --> [[<models.Player object at 0x10449c2b0>, 0],
     # [<models.Player object at 0x10449c280>, 0]]
     for player in pair_player:
-        player[1] = input(f"score du joueur, {player[0].last_name} : ")
+        player[1] = input(f"- {player[0].last_name} : ")
 
     return pair_player

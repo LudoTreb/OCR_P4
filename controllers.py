@@ -4,15 +4,14 @@ import data
 import sys, os
 
 from models import Tournament, Player, Match, Round
-from view import fill_information_tournament, display_main_menu, add_player, display_tournament_created_message, \
+from view import fill_information_tournament, display_main_menu, fill_information_player, display_tournament_created_message, \
     display_player_created_message, enter_results, display_round_results_message
 
 numbers_player = 4
 numbers_round = 3
 new_tournament = None
 list_players = []
-players_playing =[] # liste temporaire cntenant l'instance de joueur et son score lors round
-
+#players_with_temporary_scores = [] # liste temporaire cntenant l'instance de joueur et son score lors round
 
 def sort_descending_rank(list_players) -> list:
     list_players_rank_sorted = sorted(list_players, key=lambda player: player.rank, reverse=True)
@@ -55,12 +54,12 @@ def pairing_player_round_1(list_players):
         player_2 = list_2[i]
         pair_player = (player_1, player_2)
         list_pairs.append(pair_player)
-
+    #print(f"list_pairs pour round 1 : {list_pairs}")
     return list_pairs # exemple : [(<models.Player object at 0x108bd7dc0>, <models.Player object at 0x108bd7df0>),
                                 # (<models.Player object at 0x108bd78b0>, <models.Player object at 0x108bd7d90>)]
 
 
-def pairing_player(players_playing):
+def pairing_player(players_with_temporary_scores):
     """
     Pair_1 = Le gagnant d'un match rencontre le gagnant de l'autre match
     Pair_2 = les deux autres joureurs
@@ -71,15 +70,18 @@ def pairing_player(players_playing):
     list_pairs = []
     list_winner = []
     list_looser = []
-    for i in range(len(players_playing)):
+    for i in range(len(players_with_temporary_scores)):
 
-        if players_playing[i][1] == "1":
-            list_winner.append(players_playing[i][0])
+        if players_with_temporary_scores[i][1] == "1":
+            list_winner.append(players_with_temporary_scores[i][0])
 
         else:
-            list_looser.append(players_playing[i][0])
+            list_looser.append(players_with_temporary_scores[i][0])
 
         list_pairs = [tuple(list_winner), tuple(list_looser)]
+    #print(f"list_pairs pour les autres round : {list_pairs}")
+    # exemple et c'est pas ce que l'on veut:  [(<models.Player object at 0x104bcbcd0>,),
+                                            # (<models.Player object at 0x104bcbd30>,)]
 
     return list_pairs
 
@@ -98,7 +100,7 @@ def simulation_matchs():
 
 def add_players(numbers_player):
     for i in range(1, numbers_player + 1):
-        player_details = add_player(i)
+        player_details = fill_information_player(i)
         player = Player(player_details["last_name"],
                         player_details["first_name"],
                         player_details["birth_date"],
@@ -164,9 +166,9 @@ def run():
 
             else:
                 # algo des autres rounds
-                list_pairs = pairing_player(players_playing)
+                list_pairs = pairing_player(players_with_temporary_scores)
 
-            print(f"list_pairs:{len({list_pairs})} {list_pairs}, pour le round: {round_number}") # test -->
+            #print(f"list_pairs:{len({list_pairs})} {list_pairs}, pour le round: {round_number}") # test -->
             round_matches = []
             for match_number, pair in enumerate(list_pairs):
                 # print(f"match_number: {match_number}, pair: {pair}") # test --> match_number: 0, pair: (<models.Player object at 0x10100dab0>,
@@ -181,25 +183,37 @@ def run():
             new_tournament.rounds.append(round)
             #print(f"new_tournament: {new_tournament}") # test --> <models.Tournament object at 0x101093010>
 
-            # rentre les resultats
-            for match in round_matches:
-                scores = enter_results(match.players)
-                # print(f"scores: {scores}")  # test --> ex: [[<models.Player object at 0x1012e00d0>, '0,5'],
-                #                                             [<models.Player object at 0x1012e00a0>, '0,5']]
-                update_player_score(match.players)
-                if round.name != numbers_round:
-                    for player in scores:
-                        players_playing.append(player)
-                else:
-                    # affiche rapport
-                    pass
+            players_with_temporary_scores = []
+            if round.name == 4:
+                print(f"Round {round.name} , c'est le dernier !")
+                for match in round_matches:
+                    scores = enter_results(match.players)
+                    update_player_score(match.players)
 
-        #print(f"round_matches :{round_matches}") # test --> ex: [<models.Match object at 0x100f7fee0>,
+                display_round_results_message(round_matches, round)
+
+                print("C'est fini -- fonction retour au menu à faire ? pour acceder au rapport")
+
+            else:
+                print(f"Round {round.name} en cours")
+                players_with_temporary_scores.clear()
+                for match in round_matches:
+                    scores = enter_results(match.players)
+                    update_player_score(match.players)
+                    for i in range(len(scores)):
+                        players_with_temporary_scores.append(scores[i])
+                    #print(f"players_with_temporary_scores : {players_with_temporary_scores}") # test --> ex :
+                                                                        # [[<models.Player object at 0x108e03be0>, '1'],
+                                                                        # [<models.Player object at 0x108e03b20>, '0'],
+                                                                        # [<models.Player object at 0x108e03b50>, '0'],
+                                                                        # [<models.Player object at 0x108e03b80>, '1']]
+                display_round_results_message(round_matches, round)
+
+            #print(f"round_matches :{round_matches}") # test --> ex: [<models.Match object at 0x100f7fee0>,
                                                             # <models.Match object at 0x100f7fe80>]
         #print(f"test_round_matches_players: {round_matches[0].players}") # test --> ex: [[<models.Player object at 0x102771000>],
                                                                                     # [<models.Player object at 0x102771030>]]
 
-            display_round_results_message(round_matches, round)
 
 
 
