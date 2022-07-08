@@ -1,4 +1,5 @@
 class Player:
+    potential_opponent = []
 
     def __init__(self, last_name, first_name, birth_date, gender, rank, score=0):
         """
@@ -9,6 +10,7 @@ class Player:
         :param gender:
         :param rank:
         """
+
         self.last_name = last_name
         self.first_name = first_name
         self.birth_date = birth_date
@@ -16,13 +18,25 @@ class Player:
         self.rank = rank
         self.score = score
 
+    def __repr__(self):
+        return str(self.rank)
+
     @property
     def full_name(self):
         return f"{self.last_name}.{self.first_name}"
 
+    def played_with(self, player):  # pas utile mais à voir
+        pass
+
+    def add_potential_opponents(self, list_player):  # <--- on s'en sert pas vraiment non ?
+        list_copy = list_player.copy()
+        list_copy.remove(self)
+        self.potential_opponent = list_copy
+
 
 class Tournament:
     rounds = []
+
     def __init__(self, name, location, date, number_round):
         """
         Initialise le nom, le lieu, la date du tournoi
@@ -74,6 +88,7 @@ class Match:
 
 class Round:
     end_time = None
+
     def __init__(self, name, date, matches_round, status="ongoing"):
         """
         Initialise le nom, la date, l'heure de fin, l'état

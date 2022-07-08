@@ -73,6 +73,7 @@ def display_tournament_created_message(new_tournament):
 def display_player_created_message(list_player):
     print("-" * 50)
     print("Les joueurs ont bien été saisis : ")
+    print(len(list_player))
     for player in list_player:
         print(f"{player.first_name}, rank: {player.rank}, score: {player.score}")
     print("-" * 50 + "\n" + "-" * 50)
@@ -87,7 +88,7 @@ def display_round_created_message():
     pass
 
 
-def display_round_results_message(round_matches, round):  # j'ai enlever le parametre "list_scores"
+def display_round_results_message(round_matches, round):
     """ Affiche les resultats du round
     - numero de tournoi
     - quel joueur à gagner contre quel joueur
@@ -95,7 +96,7 @@ def display_round_results_message(round_matches, round):  # j'ai enlever le para
     """
     print("-" * 50 + "\n" + "-" * 50)
 
-    print(f"Résumé du Round {round.name}:") # <-- à checker c'est pas normal le result de ce print
+    print(f"Résumé du Round {round.name}:")  # <-- à checker c'est pas normal le result de ce print
     for number_match, round in enumerate(round_matches):
         print(
             f"Match {number_match + 1}: {round.players[0][0].last_name} contre {round.players[1][0].last_name} ")
