@@ -13,12 +13,17 @@ import sys, os
 
 def display_main_menu():
     menu_action = ["1", "2", "3", "4"]
-    menu = """Choissisez parmi les actions suivante :
+    menu = """
+====================== MENU ======================
+
+Choissisez parmi les actions suivante :
+   
 1: Créer un nouveau tournoi.
 2: Afficher le rapport.
 3: Sauvegarder/Charder des données.
 4: Quitter.
-Que souhaitez-vous faire : """
+    
+➡️  Que souhaitez-vous faire : """
 
     user_action = input(menu)
     if user_action not in menu_action:
@@ -30,7 +35,9 @@ Que souhaitez-vous faire : """
 
 
 def fill_information_player(player_number):
-    print(f"Information joueur_{player_number} : ")
+    message = f"Veuillez saisir les informations du joueur {player_number}\n"
+    print(f"{message : ^50}")
+
     last_name_player = input(f"Nom du joueur : ")
     first_name_player = input(f"Prénom du joueur : ")
     birth_date_player = input(f"Date de naissance du joueur : ")
@@ -50,33 +57,42 @@ def fill_information_player(player_number):
 
 
 def fill_information_tournament():
-    name_tournament = input("nom du tournoi : ")
-    localisation_tournament = input("lieu du tournoi : ")
-    date_tournament = input("date du tournoi : ")
-    number_round_tournament = input("nombre de round du tournoi [4] : ")
+    print("-" * 50)
+    message = "Veuillez saisir les informations du tournoi \n"
+    print(f"{message : ^50}")
+
+    name_tournament = input("Nom du tournoi : ")
+    localisation_tournament = input("Lieu du tournoi : ")
+    date_tournament = input("Date du tournoi : ")
+    number_player = input("Nombre de joueur : ")
+
 
     return {
         "name": name_tournament,
         "location": localisation_tournament,
         "date": date_tournament,
-        "number_round": number_round_tournament
+        "number_player": number_player
+
     }
 
 
 def display_tournament_created_message(new_tournament):
     print("-" * 50)
-    print("Tournoi a bien été crée : ")
+    message = "Tournoi a bien été crée\n"
+    print(f"{message : ^50}")
     print(new_tournament.__dict__)
     print("-" * 50 + "\n" + "-" * 50)
 
 
 def display_player_created_message(list_player):
     print("-" * 50)
-    print("Les joueurs ont bien été saisis : ")
-    print(len(list_player))
+    message = "Les joueurs ont bien été saisis \n"
+    print(f"{message : ^50}")
+
     for player in list_player:
         print(f"{player.first_name}, rank: {player.rank}, score: {player.score}")
-    print("-" * 50 + "\n" + "-" * 50)
+    # print("-" * 50 + "\n" + "-" * 50)
+    print("-" * 50)
 
 
 def display_round_created_message():
@@ -96,7 +112,8 @@ def display_round_results_message(round_matches, round):
     """
     print("-" * 50 + "\n" + "-" * 50)
 
-    print(f"Résumé du Round {round.name}:")  # <-- à checker c'est pas normal le result de ce print
+    message = f"<< Résumé du Round {round.name} >>\n"
+    print(f"{message : ^50}")
     for number_match, round in enumerate(round_matches):
         print(
             f"Match {number_match + 1}: {round.players[0][0].last_name} contre {round.players[1][0].last_name} ")
@@ -111,12 +128,18 @@ def display_round_results_message(round_matches, round):
         print("-" * 50)
 
 
-def enter_results(pair_player):  # tuple d'instance de joueur
-    print("Pour rappel des notations des scores :\nvictoire = 1, défaite = 0, match nul =  0.5")
-    print("Veuillez rentrer le score du joueur : ")
+def enter_results(pair_player, round):  # tuple d'instance de joueur
+    print("-" * 50)
+    message = f">> Round {round.name} en cours <<\n"
+    print(f"{message : ^50}")
+    print("⎮ Pour rappel des notations des scores :      ⎮\n⎮ victoire = 1, défaite = 0, match nul =  0.5 ⎮\n")
+
+    print("Veuillez rentrer le score du match : ")
     # print(f"pair_player: {pair_player}")  # test --> [[<models.Player object at 0x10449c2b0>, 0],
     # [<models.Player object at 0x10449c280>, 0]]
+    print(f"{pair_player[0][0].last_name} contre {pair_player[1][0].last_name}\n")
     for player in pair_player:
-        player[1] = input(f"- {player[0].last_name} : ")
+
+        player[1] = input(f"> {player[0].last_name} : ")
 
     return pair_player

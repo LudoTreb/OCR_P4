@@ -19,16 +19,16 @@ class Player:
         self.score = score
 
     def __repr__(self):
-        return str(self.rank)
+        return str(self.last_name)
 
     @property
-    def full_name(self):
+    def full_name(self):  # <--- on s'en sert pas vraiment non ?
         return f"{self.last_name}.{self.first_name}"
 
     def played_with(self, player):  # pas utile mais à voir
         pass
 
-    def add_potential_opponents(self, list_player):  # <--- on s'en sert pas vraiment non ?
+    def add_potential_opponents(self, list_player):
         list_copy = list_player.copy()
         list_copy.remove(self)
         self.potential_opponent = list_copy
@@ -37,7 +37,7 @@ class Player:
 class Tournament:
     rounds = []
 
-    def __init__(self, name, location, date, number_round):
+    def __init__(self, name, location, date, number_player): # <-- j'ai enlevé le number_round
         """
         Initialise le nom, le lieu, la date du tournoi
         l'attribut "number_round" par défaut est 4
@@ -49,7 +49,16 @@ class Tournament:
         self.name = name
         self.location = location
         self.date = date
-        self.number_round = number_round
+        self.number_player = number_player
+        # self.number_round = number_round
+        self.number_round = self.number_of_round(number_player)
+
+    def number_of_round(self, number_player):
+        if int(number_player) % 2 == 0:
+            number_round = int(number_player) - 1
+        else:
+            number_round = number_player
+        return number_round
 
     def time_control(self):
         """

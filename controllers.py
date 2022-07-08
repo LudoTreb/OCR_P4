@@ -88,27 +88,21 @@ def split_list_player_other_round(list_sorted):
 
 def pairing_player(list_players):
     list_pairs = []
+
     list_sorted_rank = sort_descending_rank(list_players)
     list_sorted = sort_descending_score(list_sorted_rank)
-    # print(f" list sorted {list_sorted}")
+
     for i, current_player in enumerate(list_sorted):
-        # print(f" current_player {current_player}")
         list_next_player = list_sorted[i + 1:len(list_sorted)]
-        # print(f" list_next_player {list_next_player}")
 
         for next_player in list_next_player:
-            # print(f" next player  {next_player}")
             if next_player in current_player.potential_opponent:
-                # print(f" current_player.potential_opponent {current_player.potential_opponent}")
                 pair_player = (current_player, next_player)
                 list_sorted.remove(next_player)
-                # print(f" pair player {pair_player}")
                 list_pairs.append(pair_player)
-                # print(f" list_pairs {list_pairs}")
 
                 # enlève joueur d'un potential opposant
                 current_player.potential_opponent.remove(next_player)
-
                 next_player.potential_opponent.remove(current_player)
 
                 break
@@ -127,7 +121,8 @@ def simulation_matchs():
 
 
 def add_players(numbers_player):
-    for i in range(1, numbers_player + 1):
+
+    for i in range(1, int(numbers_player) + 1):
         player_details = fill_information_player(i)
         player = Player(player_details["last_name"],
                         player_details["first_name"],
@@ -180,16 +175,14 @@ def run():
         new_tournament = Tournament(tournament_details["name"],
                                     tournament_details["location"],
                                     tournament_details["date"],
-                                    tournament_details["number_round"])
+                                    tournament_details["number_player"])
         display_tournament_created_message(new_tournament)
-        add_players(numbers_player)
+        add_players(new_tournament.number_player)
         # print(list_players) # test --> [<models.Player object at 0x10100d900>,
         # <models.Player object at 0x10100cdc0>,
         # <models.Player object at 0x10100dab0>,
         # <models.Player object at 0x10100f1f0>]
-        print(f"list_players {list_players}")
-        # print(f"list potentiel opposant d'un joueur pour voir si vide {list_players[0].potential_opponent}")
-        print(f"list_players {len(list_players)}")
+
         display_player_created_message(list_players)
 
         for round_number in range(1, int(new_tournament.number_round) + 1):
@@ -217,20 +210,19 @@ def run():
             new_tournament.rounds.append(round)
             # print(f"new_tournament: {new_tournament}") # test --> <models.Tournament object at 0x101093010>
 
-            players_with_temporary_scores = []
+
             if round.name == numbers_round:
-                print(f"Round {round.name}, c'est le dernier !")
                 for match in round_matches:
-                    scores = enter_results(match.players)
+                    scores = enter_results(match.players, round)
                     update_player_score(match.players)
 
                 display_round_results_message(round_matches, round)
-
+                
+                # retourner au menu ? Afficher Rapport ?
 
             else:
-                print(f"Round {round.name} en cours")
                 for match in round_matches:
-                    scores = enter_results(match.players)
+                    scores = enter_results(match.players, round)
                     update_player_score(match.players)
 
                 display_round_results_message(round_matches, round)
