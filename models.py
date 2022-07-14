@@ -37,7 +37,7 @@ class Player:
 class Tournament:
     rounds = []
 
-    def __init__(self, name, location, date, number_player): # <-- j'ai enlevé le number_round
+    def __init__(self, name, location, date, number_round=4):
         """
         Initialise le nom, le lieu, la date du tournoi
         l'attribut "number_round" par défaut est 4
@@ -49,9 +49,7 @@ class Tournament:
         self.name = name
         self.location = location
         self.date = date
-        self.number_player = number_player
-        # self.number_round = number_round
-        self.number_round = self.number_of_round(number_player)
+        self.number_round = number_round
 
     def number_of_round(self, number_player):
         if int(number_player) % 2 == 0:
@@ -89,10 +87,7 @@ class Match:
         :param name:
         """
         self.name = name
-        self.players = [
-            [i, 0]
-            for i in list_players
-        ]
+        self.players = [[i, 0] for i in list_players]
 
 
 class Round:
