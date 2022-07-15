@@ -36,6 +36,7 @@ class Player:
 
 class Tournament:
     rounds = []
+    list_players = []
 
     def __init__(self, name, location, date, number_round=4):
         """
@@ -50,13 +51,6 @@ class Tournament:
         self.location = location
         self.date = date
         self.number_round = number_round
-
-    def number_of_round(self, number_player):
-        if int(number_player) % 2 == 0:
-            number_round = int(number_player) - 1
-        else:
-            number_round = number_player
-        return number_round
 
     def time_control(self):
         """
@@ -88,6 +82,9 @@ class Match:
         """
         self.name = name
         self.players = [[i, 0] for i in list_players]
+
+    def __repr__(self):
+        return str(self.players)
 
 
 class Round:

@@ -12,23 +12,23 @@ from view import (
     display_player_created_message,
     enter_results,
     display_round_results_message,
-    display_ranking_tournament,
+    display_ranking_tournament, back_main_menu, display_sub_menu
 )
 
-NUMBER_PLAYER = 6
+NUMBER_PLAYER = 4
 
 new_tournament = None
 list_players = []
 
 
-def sort_descending_name(list_players) -> list:
+def sort_name(list_players) -> list:
     """
     Get a list of player sorted by their last name
 
     :param list_players: a list of player unordered
     :return: list_players_name_sorted
     """
-    list_players_rank_sorted = sorted(list_players, key=lambda player: player.last_name)
+    list_players_name_sorted = sorted(list_players, key=lambda player: player.last_name)
     return list_players_name_sorted
 
 
@@ -229,89 +229,92 @@ def update_player_score(pair_player):
 
 
 def run():
-    user_action = display_main_menu()
+    while True:
+        user_action = display_main_menu()
 
-    if user_action == "1":
-        os.system("clear")
-        tournament_details = fill_information_tournament()
-        new_tournament = Tournament(
-            tournament_details["name"],
-            tournament_details["location"],
-            tournament_details["date"],
-            tournament_details["number_round"],
-        )
-        display_tournament_created_message(new_tournament)
-        add_players(NUMBER_PLAYER)
-        # print(list_players) # test --> [<models.Player object at 0x10100d900>,
-        # <models.Player object at 0x10100cdc0>,
-        # <models.Player object at 0x10100dab0>,
-        # <models.Player object at 0x10100f1f0>]
+        if user_action == "1":
+            os.system("clear")
+            tournament_details = fill_information_tournament()
+            new_tournament = Tournament(
+                tournament_details["name"],
+                tournament_details["location"],
+                tournament_details["date"],
+                tournament_details["number_round"],
+            )
+            display_tournament_created_message(new_tournament)
+            add_players(NUMBER_PLAYER)
+            # print(list_players) # test --> [<models.Player object at 0x10100d900>,
+            # <models.Player object at 0x10100cdc0>,
+            # <models.Player object at 0x10100dab0>,
+            # <models.Player object at 0x10100f1f0>]
 
-        display_player_created_message(list_players)
+            display_player_created_message(list_players)
 
-        for round_number in range(1, int(new_tournament.number_round) + 1):
-            if round_number == 1:
-                list_pairs = pairing_player_round_1(list_players)
-                # print(list_pairs) # test --> [(<models.Player object at 0x10100dab0>, <models.Player object at 0x10100cdc0>),
-                # (<models.Player object at 0x10100f1f0>, <models.Player object at 0x10100d900>)]
+            for round_number in range(1, int(new_tournament.number_round) + 1):
+                if round_number == 1:
+                    list_pairs = pairing_player_round_1(list_players)
+                    # print(list_pairs) # test --> [(<models.Player object at 0x10100dab0>, <models.Player object at 0x10100cdc0>),
+                    # (<models.Player object at 0x10100f1f0>, <models.Player object at 0x10100d900>)]
 
-            else:
+                else:
 
-                list_pairs = pairing_player(list_players)
+                    list_pairs = pairing_player(list_players)
 
-            # print(f"list_pairs:{len({list_pairs})} {list_pairs}, pour le round: {round_number}") # test -->
-            round_matches = []
-            for match_number, pair in enumerate(list_pairs):
-                # print(f"match_number: {match_number}, pair: {pair}") # test --> match_number: 0, pair: (<models.Player object at 0x10100dab0>,
-                # <models.Player object at 0x10100cdc0>)
-                match = add_match(match_number, pair)
-                # print(f"match: {match}")  # test --> ex: <models.Match object at 0x10100ceb0>
-                round_matches.append(match)
-                # print(f"round_matches: {round_matches}")  # test --> ex: [<models.Match object at 0x10100ceb0>,
-                # <models.Match object at 0x10100f1c0>]
-            round = create_round(round_number, round_matches)
-            # print(f"round: {round}")  # test --> <models.Round object at 0x10100da50>
-            new_tournament.rounds.append(round)
-            # print(f"new_tournament: {new_tournament}") # test --> <models.Tournament object at 0x101093010>
+                # print(f"list_pairs:{len({list_pairs})} {list_pairs}, pour le round: {round_number}") # test -->
+                matches_round = []
+                for match_number, pair in enumerate(list_pairs):
+                    # print(f"match_number: {match_number}, pair: {pair}") # test --> match_number: 0, pair: (<models.Player object at 0x10100dab0>,
+                    # <models.Player object at 0x10100cdc0>)
+                    match = add_match(match_number, pair)
+                    # print(f"match: {match}")  # test --> ex: <models.Match object at 0x10100ceb0>
+                    matches_round.append(match)
+                    # print(f"matches_round: {matches_round}")  # test --> ex: [<models.Match object at 0x10100ceb0>,
+                    # <models.Match object at 0x10100f1c0>]
+                round = create_round(round_number, matches_round)
+                # print(f"round: {round}")  # test --> <models.Round object at 0x10100da50>
+                new_tournament.rounds.append(round)
+                # print(f"new_tournament: {new_tournament}") # test --> <models.Tournament object at 0x101093010>
 
-            if round.name == int(new_tournament.number_round):
+                if round.name == int(new_tournament.number_round):
 
-                for match in round_matches:
-                    scores = enter_results(match.players, round)
-                    update_player_score(match.players)
+                    for match in matches_round:
+                        scores = enter_results(match.players, round)
+                        update_player_score(match.players)
 
-                display_round_results_message(round_matches, round)
-                list_ranking = sort_descending_score(list_players)
-                display_ranking_tournament(list_ranking, new_tournament)
+                    display_round_results_message(matches_round, round)
+                    list_ranking = sort_descending_score(list_players)
+                    display_ranking_tournament(list_ranking, new_tournament)
 
-                # retourner au menu ? Afficher Rapport ?
+                    back_main_menu()
+                    # archiver, fonction qui rempli les différente liste.
+                    # retourner au menu ? Afficher Rapport ?
 
-            else:
-                for match in round_matches:
-                    scores = enter_results(match.players, round)
-                    update_player_score(match.players)
+                else:
+                    for match in matches_round:
+                        scores = enter_results(match.players, round)
+                        update_player_score(match.players)
 
-                display_round_results_message(round_matches, round)
+                    display_round_results_message(matches_round, round)
 
-            # print(f"round_matches :{round_matches}") # test --> ex: [<models.Match object at 0x100f7fee0>,
-            # <models.Match object at 0x100f7fe80>]
-        # print(f"test_round_matches_players: {round_matches[0].players}") # test --> ex: [[<models.Player object at 0x102771000>],
-        # [<models.Player object at 0x102771030>]]
+                # print(f"matches_round :{matches_round}") # test --> ex: [<models.Match object at 0x100f7fee0>,
+                # <models.Match object at 0x100f7fe80>]
+            # print(f"test_round_matches_players: {matches_round[0].players}") # test --> ex: [[<models.Player object at 0x102771000>],
+            # [<models.Player object at 0x102771030>]]
 
-    elif user_action == "2":
-        os.system("clear")
-        print("Script en cours de construction \n")
-        display_main_menu()
+        elif user_action == "2":
+            os.system("clear")
+            print("Script en cours de construction \n")
+            display_main_menu()
 
-    elif user_action == "3":
-        os.system("clear")
-        print("Script en cours de construction \n")
-        display_main_menu()
+        elif user_action == "3":
+            os.system("clear")
+            print("Script en cours de construction \n")
+            display_main_menu()
 
-    elif user_action == "4":
-        os.system("clear")
-        print("A bientôt !")
-        sys.exit()
+        elif user_action == "4":
+            os.system("clear")
+            print("A bientôt !")
+            sys.exit()
 
 
 if __name__ == "__main__":

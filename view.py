@@ -4,13 +4,6 @@ import datetime
 
 import sys, os
 
-
-# sub_menu = """Choissisez parmi les actions suivante :
-# 1: Ajouter les joueurs.
-# 3: Trier des joueurs par classement.
-# 4: Sauvegarder/Charder des données.
-# 5: Quitter.
-# Que souhaitez-vous faire : """
 MESSAGE_INVALID = "Donnée invalide, veuillez saisir une donnée numérique"
 
 
@@ -40,6 +33,39 @@ Choissisez parmi les actions suivante :
         display_main_menu()
     else:
         return user_action
+
+
+def display_sub_menu():
+    sub_menu_action = ["1", "2"]
+    sub_menu = """
+==================== SUBMENU ======================
+
+Choissisez parmi les actions suivante :
+
+1: Revenir au menu principale.
+2: Quitter
+
+Que souhaitez-vous faire : """
+
+    user_action = input(sub_menu)
+    if user_action not in sub_menu_action:
+        os.system("clear")
+        print("Choix non valide")
+        display_sub_menu()
+    else:
+        return user_action
+
+
+def back_main_menu():
+    user_action = display_sub_menu()
+
+    if user_action == "2":
+        os.system("clear")
+        print("A bientôt !")
+        sys.exit()
+
+    elif user_action == "1":
+        print("")
 
 
 def is_valid_gender(message):
