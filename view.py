@@ -21,10 +21,9 @@ Choissisez parmi les actions suivante :
    
 1: Créer un nouveau tournoi.
 2: Afficher le rapport.
-3: Sauvegarder/Charder des données.
-4: Quitter.
+3: Quitter.
     
-➡️  Que souhaitez-vous faire : """
+--> Que souhaitez-vous faire : """
 
     user_action = input(menu)
     if user_action not in menu_action:
@@ -42,7 +41,7 @@ def display_sub_menu():
 
 Choissisez parmi les actions suivante :
 
-1: Revenir au menu principale.
+1: Revenir au menu principal.
 2: Quitter
 
 Que souhaitez-vous faire : """
@@ -115,6 +114,15 @@ def is_input_digit(message):
     return number_to_check
 
 
+def is_time_control_right(message):
+    input_to_check = input(message + ": ")
+    possibility = ["bullet", "blitz", "coup rapide"]
+    while input_to_check not in possibility:
+        print("Seuls les cadences rapides sont possible (bullet, blizt, coup rapide)")
+        input_to_check = input(message + ": ")
+
+    return input_to_check
+
 def fill_information_player(player_number):
     """
     Get input data for players in the form of dictonary
@@ -128,8 +136,8 @@ def fill_information_player(player_number):
     last_name_player = input("Nom du joueur : ")
     first_name_player = input("Prénom du joueur : ")
     birth_date_player = is_valid_date("Date de naissance du joueur (jj/mm/aaaa)")
-    gender_player = is_valid_gender("sexe du joueur (f/h)")
-    rank_player = is_input_digit("classemnt du joueur")
+    gender_player = is_valid_gender("Sexe du joueur (f/h)")
+    rank_player = is_input_digit("Classement du joueur")
 
     print("-" * 50)
 
@@ -155,12 +163,14 @@ def fill_information_tournament():
     name_tournament = input("Nom du tournoi : ")
     localisation_tournament = input("Lieu du tournoi : ")
     date_tournament = is_valid_date("Date du tournoi (jj/mm/aaaa)")
+    time_control = is_time_control_right("Cadence (coup rapide)")
     number_round_tournament = is_input_digit("Nombre de round du tournoi [4]")
 
     return {
         "name": name_tournament,
         "location": localisation_tournament,
         "date": date_tournament,
+        "time_control": time_control,
         "number_round": number_round_tournament,
     }
 

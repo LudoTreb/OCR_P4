@@ -22,8 +22,8 @@ class Player:
         return str(self.last_name)
 
     @property
-    def full_name(self):  # <--- on s'en sert pas vraiment non ?
-        return f"{self.last_name}.{self.first_name}"
+    def full_name(self):
+        return f"{self.last_name} {self.first_name}"
 
     def played_with(self, player):  # pas utile mais à voir
         pass
@@ -38,7 +38,7 @@ class Tournament:
     rounds = []
     list_players = []
 
-    def __init__(self, name, location, date, number_round=4):
+    def __init__(self, name, location, date, time_control, number_round=4):
         """
         Initialise le nom, le lieu, la date du tournoi
         l'attribut "number_round" par défaut est 4
@@ -50,14 +50,8 @@ class Tournament:
         self.name = name
         self.location = location
         self.date = date
+        self.time_control = time_control
         self.number_round = number_round
-
-    def time_control(self):
-        """
-        A definir
-        :return:
-        """
-        pass
 
     def description(self):
         """
@@ -102,3 +96,6 @@ class Round:
         self.date = date
         self.matches_round = matches_round
         self.status = status
+
+    def __repr__(self):
+        return str(self.matches_round)

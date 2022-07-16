@@ -239,6 +239,7 @@ def run():
                 tournament_details["name"],
                 tournament_details["location"],
                 tournament_details["date"],
+                tournament_details["time_control"],
                 tournament_details["number_round"],
             )
             display_tournament_created_message(new_tournament)
@@ -306,12 +307,8 @@ def run():
             print("Script en cours de construction \n")
             display_main_menu()
 
-        elif user_action == "3":
-            os.system("clear")
-            print("Script en cours de construction \n")
-            display_main_menu()
 
-        elif user_action == "4":
+        elif user_action == "3":
             os.system("clear")
             print("A bientôt !")
             sys.exit()
