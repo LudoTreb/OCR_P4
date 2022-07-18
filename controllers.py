@@ -1,6 +1,6 @@
 import datetime
 
-import data
+from data import list_archive
 import sys, os
 
 from models import Tournament, Player, Match, Round
@@ -12,13 +12,32 @@ from view import (
     display_player_created_message,
     enter_results,
     display_round_results_message,
-    display_ranking_tournament, back_main_menu, display_sub_menu
+    display_ranking_tournament,
+    display_sub_menu,
+    display_rapport_menu,
+    display_order_name_all_actor,
+    display_order_rank_all_actor,
+    display_order_name_player,
+    display_order_rank_player,
+    display_all_tournament,
+    display_all_rounds,
+    display_all_match,
 )
 
-NUMBER_PLAYER = 4
+NUMBER_PLAYER = 8
+
 
 new_tournament = None
 list_players = []
+
+
+def sort_date(list_tournaments):
+    list_tournaments_date_sorted = sorted(
+        list_tournaments,
+        key=lambda tournament: datetime.datetime.strptime(tournament.date, "%d/%m/%Y"),
+        reverse=True,
+    )
+    return list_tournaments_date_sorted
 
 
 def sort_name(list_players) -> list:
@@ -228,6 +247,133 @@ def update_player_score(pair_player):
             player[0].score += float(player[1])
 
 
+def create_list_all_matches(tournament_round):
+    list_all_matches = []
+
+    for round in tournament_round:
+        for match in round.matches_round:
+            list_all_matches.append(match)
+    return list_all_matches
+
+
+def create_list_all_actor(list_archive):
+    list_all_actor = []
+    for tournament in list_archive:
+        for player in tournament.list_players:
+            list_all_actor.append(player)
+
+    return list_all_actor
+
+
+def archive_tournament(new_tournament):
+    list_archive.append(new_tournament)
+
+
+def update_list_players_tournament(list_players, tournament):
+    tournament.list_players = list_players
+
+
+def list_name_tournaments(list_archive):
+    list_name_tournaments = []
+    for tournament in list_archive:
+        list_name_tournaments.append(tournament.name)
+    return list_name_tournaments
+
+
+def select_tournament():
+    choice_possibility = list_name_tournaments(list_archive)
+    user_choice = input("--> Veuillez choisir un nom de tournoi (copier/coller) : ")
+    while user_choice not in choice_possibility:
+        user_choice = input(
+            "Choix non valide.\nSelectionner le nom d'un tournoi (copier/coller) : "
+        )
+
+    return user_choice
+
+
+def quit_programm():
+    os.system("clear")
+    print("-" * 50)
+    print("================== A bientôt ! ===================")
+    print("-" * 50)
+    sys.exit()
+
+
+def back_main_menu():
+    user_action = display_sub_menu()
+
+    if user_action == "2":
+        quit_programm()
+
+    elif user_action == "1":
+        os.system("clear")
+
+
+def tournament_selected():
+    name_tournament = select_tournament()
+    for tournament in list_archive:
+        if tournament.name == name_tournament:
+            tournament_selected = tournament
+
+    return tournament_selected
+
+
+def action_rapport_menu():
+    user_action = display_rapport_menu()
+    if user_action == "1":
+        os.system("clear")
+        list_all_actor = create_list_all_actor(list_archive)
+        list_ranking = sort_descending_rank(list_all_actor)
+        list_players_sorted_name = sort_name(list_all_actor)
+        display_order_name_all_actor(list_players_sorted_name)
+        display_order_rank_all_actor(list_ranking)
+
+        back_main_menu()
+
+    elif user_action == "2":
+        os.system("clear")
+        display_all_tournament(sort_date(list_archive))
+
+        tournament = tournament_selected()
+        list_ranking = sort_descending_rank(tournament.list_players)
+        list_players_sorted_name = sort_name(tournament.list_players)
+        display_order_name_player(list_players_sorted_name, tournament)
+        display_order_rank_player(list_ranking, tournament)
+
+        back_main_menu()
+
+    elif user_action == "3":
+        os.system("clear")
+        display_all_tournament(sort_date(list_archive))
+
+        back_main_menu()
+
+    elif user_action == "4":
+        os.system("clear")
+        display_all_tournament(sort_date(list_archive))
+
+        tournament = tournament_selected()
+        display_all_rounds(tournament, tournament.rounds)
+
+        back_main_menu()
+
+    elif user_action == "5":
+        os.system("clear")
+        display_all_tournament(sort_date(list_archive))
+
+        tournament = tournament_selected()
+        list_all_matches = create_list_all_matches(tournament.rounds)
+        display_all_match(tournament, list_all_matches)
+
+        back_main_menu()
+
+    elif user_action == "6":
+        os.system("clear")
+
+    elif user_action == "7":
+        quit_programm()
+
+
 def run():
     while True:
         user_action = display_main_menu()
@@ -248,7 +394,7 @@ def run():
             # <models.Player object at 0x10100cdc0>,
             # <models.Player object at 0x10100dab0>,
             # <models.Player object at 0x10100f1f0>]
-
+            update_list_players_tournament(list_players, new_tournament)
             display_player_created_message(list_players)
 
             for round_number in range(1, int(new_tournament.number_round) + 1):
@@ -276,12 +422,13 @@ def run():
                 new_tournament.rounds.append(round)
                 # print(f"new_tournament: {new_tournament}") # test --> <models.Tournament object at 0x101093010>
 
-                if round.name == int(new_tournament.number_round):
+                if round.name == new_tournament.number_round:
 
                     for match in matches_round:
                         scores = enter_results(match.players, round)
                         update_player_score(match.players)
 
+                    archive_tournament(new_tournament)
                     display_round_results_message(matches_round, round)
                     list_ranking = sort_descending_score(list_players)
                     display_ranking_tournament(list_ranking, new_tournament)
@@ -304,14 +451,10 @@ def run():
 
         elif user_action == "2":
             os.system("clear")
-            print("Script en cours de construction \n")
-            display_main_menu()
-
+            action_rapport_menu()
 
         elif user_action == "3":
-            os.system("clear")
-            print("A bientôt !")
-            sys.exit()
+            quit_programm()
 
 
 if __name__ == "__main__":

@@ -2,7 +2,8 @@
 
 import datetime
 
-import sys, os
+import os
+
 
 MESSAGE_INVALID = "Donnée invalide, veuillez saisir une donnée numérique"
 
@@ -13,7 +14,7 @@ def display_main_menu():
     The user choose an action.
     :return:
     """
-    menu_action = ["1", "2", "3", "4"]
+    menu_action = ["1", "2", "3"]
     menu = """
 ====================== MENU ======================
 
@@ -37,7 +38,7 @@ Choissisez parmi les actions suivante :
 def display_sub_menu():
     sub_menu_action = ["1", "2"]
     sub_menu = """
-==================== SUBMENU ======================
+==================== SUBMENU =====================
 
 Choissisez parmi les actions suivante :
 
@@ -55,16 +56,33 @@ Que souhaitez-vous faire : """
         return user_action
 
 
-def back_main_menu():
-    user_action = display_sub_menu()
+def display_rapport_menu():
+    menu_action = ["1", "2", "3", "4", "5", "6", "7"]
 
-    if user_action == "2":
+    menu_rapport = """
+==================== RAPPORT =====================
+
+Choissisez parmi les actions suivante :
+
+1 : Liste de tous les acteurs
+2 : Liste de tous les joueurs d'un tournoi
+3 : Liste de tous les tournois
+4 : Liste de tous les tours d'un tournoi
+5 : Liste de tous les matchs d'un tournoi
+6 : Revenir au menu principal
+7 : Quitter
+
+--> Que souhaitez-vous faire : """
+
+    user_action = input(menu_rapport)
+
+    if user_action not in menu_action:
         os.system("clear")
-        print("A bientôt !")
-        sys.exit()
+        print("Choix non valide")
+        display_rapport_menu()
 
-    elif user_action == "1":
-        print("")
+    else:
+        return user_action
 
 
 def is_valid_gender(message):
@@ -91,7 +109,7 @@ def is_valid_date(message):
     while True:
         try:
             date = input(message + ": ")
-            valid_date = datetime.datetime.strptime(date, "%d/%m/%Y")
+            datetime.datetime.strptime(date, "%d/%m/%Y")
             return date
 
         except ValueError:
@@ -111,7 +129,7 @@ def is_input_digit(message):
         print(f"{MESSAGE_INVALID}")
         number_to_check = input()
 
-    return number_to_check
+    return int(number_to_check)
 
 
 def is_time_control_right(message):
@@ -122,6 +140,7 @@ def is_time_control_right(message):
         input_to_check = input(message + ": ")
 
     return input_to_check
+
 
 def fill_information_player(player_number):
     """
@@ -213,42 +232,42 @@ def display_round_created_message():
     pass
 
 
-def display_round_results_message(round_matches, round):
+def display_round_results_message(round_matches, rounds):
     """
     Display the result of all the matches of a round.
 
     :param round_matches: a list of matches of a round
-    :param round: instance of a round
+    :param rounds: instance of a round
 
     """
 
     print("-" * 50 + "\n" + "-" * 50)
 
-    message = f"<< Résumé du Round {round.name} >>\n"
+    message = f"<< Résumé du Round {rounds.name} >>\n"
     print(f"{message : ^50}")
-    for number_match, round in enumerate(round_matches):
+    for number_match, rounds in enumerate(round_matches):
         print(
-            f"Match {number_match + 1}: {round.players[0][0].last_name} contre {round.players[1][0].last_name} "
+            f"Match {number_match + 1}: {rounds.players[0][0].last_name} contre {rounds.players[1][0].last_name} "
         )
-        if round.players[0][1] == "0.5" or round.players[0][1] == "0,5":
+        if rounds.players[0][1] == "0.5" or rounds.players[0][1] == "0,5":
             print(f"Résultat : Match nul")
-        elif round.players[0][1] == "1":
-            print(f"Résultat : Victoire de {round.players[0][0].last_name}")
+        elif rounds.players[0][1] == "1":
+            print(f"Résultat : Victoire de {rounds.players[0][0].last_name}")
         else:
-            print(f"Résultat : Victoire de {round.players[1][0].last_name}")
+            print(f"Résultat : Victoire de {rounds.players[1][0].last_name}")
 
         print("-" * 50)
 
 
-def enter_results(pair_player, round):
+def enter_results(pair_player, rounds):
     """
     Get input data for a score result of a match.
     :param pair_player: a list of pair of player
-    :param round: instance of a round
+    :param rounds: instance of a round
     :return: pair_player
     """
     print("-" * 50)
-    message = f">> Round {round.name} en cours <<\n"
+    message = f">> Round {rounds.name} en cours <<\n"
     print(f"{message : ^50}")
     print(
         "⎮ Pour rappel des notations des scores :      ⎮\n⎮ victoire = 1  défaite = 0  match nul =  0.5 ⎮\n"
@@ -280,3 +299,132 @@ def display_ranking_tournament(list_ranking, tournament):
 
     for i, player in enumerate(list_ranking):
         print(f"{i + 1 : <3} {player.last_name : ^15} {player.score : >5}")
+
+
+def display_order_rank_player(list_ranking, tournament):
+    """
+    Display the result of the tournament.
+    :param list_ranking:
+    :param tournament:
+    :return:
+    """
+    print("\n============== Joueur par Classement =============\n")
+
+    print(f"{tournament.date},\n{tournament.name}\n")
+    print("-" * 50)
+    print(f"{'N°' : <3} {'Joueurs' : ^30} {'Rank' : >5}")
+    print("-" * 50)
+
+    for i, player in enumerate(list_ranking):
+        print(f"{i + 1 : <3} {player.full_name : ^30} {player.rank : >5}")
+    print("-" * 50)
+
+
+def display_order_rank_all_actor(list_ranking):
+    """
+    Display the result of the tournament.
+    :param list_ranking:
+    :return:
+    """
+    print("\n============== Joueur par Classement =============\n")
+
+    print("-" * 50)
+    print(f"{'N°' : <3} {'Joueurs' : ^30} {'Rank' : >5}")
+    print("-" * 50)
+
+    for i, player in enumerate(list_ranking):
+        print(f"{i + 1 : <3} {player.full_name : ^30} {player.rank : >5}")
+    print("-" * 50)
+
+
+def display_order_name_player(list_players_sorted_name, tournament):
+    """
+    Display the result of the tournament.
+    :param list_players_sorted_name:
+    :param tournament:
+    :return:
+    """
+    print("\n================= Joueur par Nom =================\n")
+
+    print(f"{tournament.date},\n{tournament.name}\n")
+    print("-" * 50)
+    print(f"{'N°' : <3} {'Joueurs' : ^30} {'Rank' : >5}")
+    print("-" * 50)
+
+    for i, player in enumerate(list_players_sorted_name):
+        print(f"{i + 1 : <3} {player.full_name : ^30} {player.rank : >5}")
+    print("-" * 50)
+
+
+def display_order_name_all_actor(list_players_sorted_name):
+    """
+    Display the result of the tournament.
+    :param list_players_sorted_name:
+    :return:
+    """
+    print("\n================= Joueur par Nom =================\n")
+
+    print("-" * 50)
+    print(f"{'N°' : <3} {'Joueurs' : ^30} {'Rank' : >5}")
+    print("-" * 50)
+
+    for i, player in enumerate(list_players_sorted_name):
+        print(f"{i + 1 : <3} {player.full_name : ^30} {player.rank : >5}")
+    print("-" * 50)
+
+
+def display_all_tournament(list_tournaments_sorted_date):
+    """
+    Display the result of the tournament.
+    :param list_tournaments_sorted_date:
+    :return:
+    """
+    print("\n============================ Les Tournois ============================\n")
+
+    print(f"{'Nom' : <40} {'Lieu' : ^15} {'Année' : ^15}")
+    print("-" * 70)
+
+    for i, tournament in enumerate(list_tournaments_sorted_date):
+        print(
+            f"{tournament.name: <40} {tournament.location : ^15} {tournament.date : ^15}"
+        )
+    print("-" * 70)
+
+
+def display_all_rounds(tournament, tournament_round):
+    """
+    Display the result of the tournament.
+    :param tournament:
+    :param tournament_round:
+    :return:
+    """
+    print("\n=================== Les Tours ====================\n")
+
+    print(f"{tournament.date},\n{tournament.name}")
+
+    for i, list_rounds in enumerate(tournament_round):
+        print(f"\n---- Tour n°{i + 1} ------------------------------------")
+        print("-" * 50)
+
+        for match in list_rounds.matches_round:
+            print(f"match {match.name + 1}: {match.players[0]} vs {match.players[1]}")
+    print("-" * 50)
+
+
+def display_all_match(tournament, list_all_matches):
+    """
+    Display the result of the tournament.
+    :param tournament:
+    :param list_all_matches:
+    :return:
+    """
+    print("\n=================== Les Matchs ===================\n")
+
+    print(f"{tournament.date},\n{tournament.name}\n")
+    print("-" * 50)
+    print(f"{'N°' : <3} {'Joueurs' : <20}")
+    print("-" * 50)
+
+    for i, match in enumerate(list_all_matches):
+        print(f"{i + 1 : <3} {match.players[0]} vs {match.players[1]}")
+    print("-" * 50)

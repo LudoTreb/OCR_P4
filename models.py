@@ -53,12 +53,12 @@ class Tournament:
         self.time_control = time_control
         self.number_round = number_round
 
-    def description(self):
+    def description_tournament(self):
         """
         Affiche la description du tournoi
-        :return: le print
+        :return:
         """
-        return print(f"Message du président")
+        pass
 
     def historic_tournament(self):
         """
@@ -89,7 +89,6 @@ class Round:
         Initialise le nom, la date, l'heure de fin, l'état
         :param name:
         :param date:
-        :param end_time:
         :param status:
         """
         self.name = name
