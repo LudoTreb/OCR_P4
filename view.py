@@ -4,26 +4,25 @@ import datetime
 
 import os
 
-
 MESSAGE_INVALID = "Donnée invalide, veuillez saisir une donnée numérique"
 
 
-def display_main_menu():
+def display_main_menu() -> str:
     """
     Display the main menu.
     The user choose an action.
-    :return:
+    :return: user_action: str
     """
     menu_action = ["1", "2", "3"]
     menu = """
 ====================== MENU ======================
 
 Choissisez parmi les actions suivante :
-   
+
 1: Créer un nouveau tournoi.
 2: Afficher le rapport.
 3: Quitter.
-    
+
 --> Que souhaitez-vous faire : """
 
     user_action = input(menu)
@@ -35,7 +34,12 @@ Choissisez parmi les actions suivante :
         return user_action
 
 
-def display_sub_menu():
+def display_sub_menu() -> str:
+    """
+    Display the sub menu.
+    The user choose an action
+    :return: user_action: str
+    """
     sub_menu_action = ["1", "2"]
     sub_menu = """
 ==================== SUBMENU =====================
@@ -56,7 +60,12 @@ Que souhaitez-vous faire : """
         return user_action
 
 
-def display_rapport_menu():
+def display_rapport_menu() -> str:
+    """
+    Display the rapport menu.
+    The user choose an action
+    :return: user_action: str
+    """
     menu_action = ["1", "2", "3", "4", "5", "6", "7"]
 
     menu_rapport = """
@@ -85,11 +94,11 @@ Choissisez parmi les actions suivante :
         return user_action
 
 
-def is_valid_gender(message):
+def is_valid_gender(message: str) -> str:
     """
     Check if the input is the right string
-    :param message: message of what the program wants
-    :return: choice
+    :param message: str
+    :return: choice: str
     """
     gender = ["h", "f"]
     choice = input(message + " : ")
@@ -99,12 +108,12 @@ def is_valid_gender(message):
     return choice
 
 
-def is_valid_date(message):
+def is_valid_date(message: str) -> str:
     """
     Check if the input is the right date format
 
-    :param message: message of what the program wants
-    :return: formated date
+    :param message: str
+    :return: date: str
     """
     while True:
         try:
@@ -117,12 +126,12 @@ def is_valid_date(message):
             print("Veuillez saisir la date au bon format")
 
 
-def is_input_digit(message):
+def is_input_digit(message: str) -> int:
     """
     Check if the input is digital or not.
 
-    :param message: the message if is not digital (str)
-    :return: number_to_check
+    :param message: str
+    :return: number_to_check: int
     """
     number_to_check = input(message + ": ")
     while not number_to_check.isdigit():
@@ -132,7 +141,13 @@ def is_input_digit(message):
     return int(number_to_check)
 
 
-def is_time_control_right(message):
+def is_time_control_right(message: str) -> str:
+    """
+    Check if the input of the time control is right.
+    User have choice between bullet, blitz or coup rapide.
+    :param message: str
+    :return: input_to_check: str
+    """
     input_to_check = input(message + ": ")
     possibility = ["bullet", "blitz", "coup rapide"]
     while input_to_check not in possibility:
@@ -142,12 +157,12 @@ def is_time_control_right(message):
     return input_to_check
 
 
-def fill_information_player(player_number):
+def fill_information_player(player_number: int) -> dict:
     """
     Get input data for players in the form of dictonary
 
-    :param player_number: a int
-    :return: a dictionary
+    :param player_number: int
+    :return: dict
     """
     message = f"Veuillez saisir les informations du joueur {player_number}\n"
     print(f"{message : ^50}")
@@ -169,11 +184,11 @@ def fill_information_player(player_number):
     }
 
 
-def fill_information_tournament():
+def fill_information_tournament() -> dict:
     """
     Get input data for a tournament in the form of dictonary
 
-    :return: a dictionary
+    :return: dict
     """
     print("-" * 50)
     message = "Veuillez saisir les informations du tournoi \n"
@@ -197,7 +212,7 @@ def fill_information_tournament():
 def display_tournament_created_message(new_tournament):
     """
     Display the data of a tournament
-    :param new_tournament: a instance of tournament
+    :param new_tournament: models.Tournament
 
     """
     print("-" * 50)
@@ -207,7 +222,7 @@ def display_tournament_created_message(new_tournament):
     print("-" * 50 + "\n" + "-" * 50)
 
 
-def display_player_created_message(list_player):
+def display_player_created_message(list_player: list):
     """
     Display the data of all player of a list
     :param list_player:
@@ -223,24 +238,13 @@ def display_player_created_message(list_player):
     print("-" * 50)
 
 
-def display_round_created_message():
-    """Affiche les informations du round
-    - numero de round
-    - quel joueur affronte quel joueur
-    - le score des joueurs
-    """
-    pass
-
-
-def display_round_results_message(round_matches, rounds):
+def display_round_results_message(round_matches: list, rounds):
     """
     Display the result of all the matches of a round.
 
-    :param round_matches: a list of matches of a round
-    :param rounds: instance of a round
-
+    :param round_matches: list
+    :param rounds: models.Round
     """
-
     print("-" * 50 + "\n" + "-" * 50)
 
     message = f"<< Résumé du Round {rounds.name} >>\n"
@@ -250,7 +254,7 @@ def display_round_results_message(round_matches, rounds):
             f"Match {number_match + 1}: {rounds.players[0][0].last_name} contre {rounds.players[1][0].last_name} "
         )
         if rounds.players[0][1] == "0.5" or rounds.players[0][1] == "0,5":
-            print(f"Résultat : Match nul")
+            print("Résultat : Match nul")
         elif rounds.players[0][1] == "1":
             print(f"Résultat : Victoire de {rounds.players[0][0].last_name}")
         else:
@@ -259,12 +263,14 @@ def display_round_results_message(round_matches, rounds):
         print("-" * 50)
 
 
-def enter_results(pair_player, rounds):
+def enter_results(pair_player: list, rounds) -> list:
     """
-    Get input data for a score result of a match.
-    :param pair_player: a list of pair of player
-    :param rounds: instance of a round
-    :return: pair_player
+    Get input data for a score result of a match
+    and display it.
+
+    :param pair_player: list
+    :param rounds: models.Round
+    :return: pair_player: list
     """
     print("-" * 50)
     message = f">> Round {rounds.name} en cours <<\n"
@@ -286,12 +292,12 @@ def enter_results(pair_player, rounds):
     return pair_player
 
 
-def display_ranking_tournament(list_ranking, tournament):
+def display_ranking_tournament(list_ranking: list, tournament):
     """
     Display the result of the tournament.
-    :param list_ranking:
-    :param tournament:
-    :return:
+
+    :param list_ranking: list
+    :param tournament: models.Tournament
     """
     print("\n==================== RESULTATS ===================\n")
     print(f"{tournament.date},\n{tournament.name}\n")
@@ -301,12 +307,12 @@ def display_ranking_tournament(list_ranking, tournament):
         print(f"{i + 1 : <3} {player.last_name : ^15} {player.score : >5}")
 
 
-def display_order_rank_player(list_ranking, tournament):
+def display_order_rank_player(list_ranking: list, tournament):
     """
-    Display the result of the tournament.
-    :param list_ranking:
-    :param tournament:
-    :return:
+    Display all players of the tournament ordored by their rank.
+
+    :param list_ranking: list
+    :param tournament: models.Tournament
     """
     print("\n============== Joueur par Classement =============\n")
 
@@ -320,11 +326,11 @@ def display_order_rank_player(list_ranking, tournament):
     print("-" * 50)
 
 
-def display_order_rank_all_actor(list_ranking):
+def display_order_rank_all_actor(list_ranking: list):
     """
-    Display the result of the tournament.
-    :param list_ranking:
-    :return:
+    Display all actor of all tournament ordered by their rank.
+
+    :param list_ranking: list
     """
     print("\n============== Joueur par Classement =============\n")
 
@@ -337,12 +343,12 @@ def display_order_rank_all_actor(list_ranking):
     print("-" * 50)
 
 
-def display_order_name_player(list_players_sorted_name, tournament):
+def display_order_name_player(list_players_sorted_name: list, tournament):
     """
-    Display the result of the tournament.
-    :param list_players_sorted_name:
-    :param tournament:
-    :return:
+    Display all players of all tournament ordered by their name.
+
+    :param list_players_sorted_name: list
+    :param tournament: models.Tournament
     """
     print("\n================= Joueur par Nom =================\n")
 
@@ -356,11 +362,11 @@ def display_order_name_player(list_players_sorted_name, tournament):
     print("-" * 50)
 
 
-def display_order_name_all_actor(list_players_sorted_name):
+def display_order_name_all_actor(list_players_sorted_name: list):
     """
-    Display the result of the tournament.
-    :param list_players_sorted_name:
-    :return:
+    Display all actor of all tournament ordered by their name.
+
+    :param list_players_sorted_name: list
     """
     print("\n================= Joueur par Nom =================\n")
 
@@ -373,11 +379,11 @@ def display_order_name_all_actor(list_players_sorted_name):
     print("-" * 50)
 
 
-def display_all_tournament(list_tournaments_sorted_date):
+def display_all_tournament(list_tournaments_sorted_date: list):
     """
-    Display the result of the tournament.
-    :param list_tournaments_sorted_date:
-    :return:
+    Display all tournament
+
+    :param list_tournaments_sorted_date: list
     """
     print("\n============================ Les Tournois ============================\n")
 
@@ -391,12 +397,12 @@ def display_all_tournament(list_tournaments_sorted_date):
     print("-" * 70)
 
 
-def display_all_rounds(tournament, tournament_round):
+def display_all_rounds(tournament, tournament_round: list):
     """
-    Display the result of the tournament.
-    :param tournament:
-    :param tournament_round:
-    :return:
+    Display the result of all rounds of a tournament.
+
+    :param tournament: models.Tournament
+    :param tournament_round: list
     """
     print("\n=================== Les Tours ====================\n")
 
@@ -411,12 +417,12 @@ def display_all_rounds(tournament, tournament_round):
     print("-" * 50)
 
 
-def display_all_match(tournament, list_all_matches):
+def display_all_match(tournament, list_all_matches: list):
     """
-    Display the result of the tournament.
-    :param tournament:
-    :param list_all_matches:
-    :return:
+    Display all matches of a tournament.
+
+    :param tournament: models.Tournament
+    :param list_all_matches: list
     """
     print("\n=================== Les Matchs ===================\n")
 

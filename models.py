@@ -53,6 +53,9 @@ class Tournament:
         self.time_control = time_control
         self.number_round = number_round
 
+    def __repr__(self):
+        return str(self.name)
+
     def description_tournament(self):
         """
         Affiche la description du tournoi
