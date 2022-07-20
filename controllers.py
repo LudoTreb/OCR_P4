@@ -17,7 +17,7 @@ from views import (display_all_match, display_all_rounds,
                    enter_results, fill_information_player,
                    fill_information_tournament)
 
-NUMBER_PLAYER = 4
+NUMBER_PLAYER = 8
 
 new_tournament = None
 players = []
