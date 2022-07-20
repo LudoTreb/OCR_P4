@@ -1,97 +1,84 @@
-import sys
-import os
-import datetime
+""" Controllers : Main Program """
 
-from data import list_archive
-from models import Tournament, Player, Match, Round
-from view import (
-    fill_information_tournament,
-    display_main_menu,
-    fill_information_player,
-    display_tournament_created_message,
-    display_player_created_message,
-    enter_results,
-    display_round_results_message,
-    display_ranking_tournament,
-    display_sub_menu,
-    display_rapport_menu,
-    display_order_name_all_actor,
-    display_order_rank_all_actor,
-    display_order_name_player,
-    display_order_rank_player,
-    display_all_tournament,
-    display_all_rounds,
-    display_all_match,
-)
+import datetime
+import os
+import sys
+from typing import List
+
+from archive import list_archive
+from models import Match, Player, Round, Tournament
+from views import (display_all_match, display_all_rounds,
+                   display_all_tournament, display_main_menu,
+                   display_order_name_all_actor, display_order_name_player,
+                   display_order_rank_all_actor, display_order_rank_player,
+                   display_player_created_message, display_ranking_tournament,
+                   display_rapport_menu, display_round_results_message,
+                   display_sub_menu, display_tournament_created_message,
+                   enter_results, fill_information_player,
+                   fill_information_tournament)
 
 NUMBER_PLAYER = 4
 
-
 new_tournament = None
-list_players = []
+players = []
 
 
-def sort_date(list_tournaments: list) -> list:
+def sort_date(tournaments: list) -> list:
     """
     Sort by descending the tournament by the date.
 
-    :param list_tournaments: list
+    :param tournaments: list
     :return: list_tournaments_date_sorted: list
     """
     list_tournaments_date_sorted = sorted(
-        list_tournaments,
+        tournaments,
         key=lambda tournament: datetime.datetime.strptime(tournament.date, "%d/%m/%Y"),
         reverse=True,
     )
     return list_tournaments_date_sorted
 
 
-def sort_name(list_players: list) -> list:
+def sort_name(players: list) -> list:
     """
     Get a list of player sorted by their last name
 
-    :param list_players: list
-    :return: list_players_name_sorted: list
+    :param players: list
+    :return: players_name_sorted: list
     """
-    list_players_name_sorted = sorted(list_players, key=lambda player: player.last_name)
-    return list_players_name_sorted
+    players_name_sorted = sorted(players, key=lambda player: player.last_name)
+    return players_name_sorted
 
 
-def sort_descending_rank(list_players: list) -> list:
+def sort_descending_rank(players: list) -> list:
     """
     Get a list of players sorted by their rank in a descending order
 
-    :param list_players: list
-    :return: list_players_rank_sorted: list
+    :param players: list
+    :return: players_rank_sorted: list
     """
-    list_players_rank_sorted = sorted(
-        list_players, key=lambda player: player.rank, reverse=True
-    )
-    return list_players_rank_sorted
+    players_rank_sorted = sorted(players, key=lambda player: player.rank, reverse=True)
+    return players_rank_sorted
 
 
-def split_list_player_round_1(list_players: list) -> tuple:
+def split_list_player_round_1(players: list) -> tuple[list, list]:
     """
     Split in half a list of player into two list.
     This is for the first round of the tournament.
 
-    :param list_players: list
-    :return: first_half_list_players, second_half_list_players: tuple
+    :param players: list
+    :return: first_half_players, second_half_players: tuple[list, list]
     """
-    length = len(list_players)
+    length = len(players)
     middle_index = length // 2
-    first_half_list_players = list_players[:middle_index]
-    second_half_list_players = list_players[middle_index:]
+    first_half_players = players[:middle_index]
+    second_half_players = players[middle_index:]
     return (
-        first_half_list_players,
-        second_half_list_players,
-    )  # exemple: ([<models.Player object at 0x10b05bdc0>,
-    # <models.Player object at 0x10b05b8b0>],
-    # [<models.Player object at 0x10b05bdf0>,
-    # <models.Player object at 0x10b05bd90>])
+        first_half_players,
+        second_half_players,
+    )
 
 
-def pairing_player_round_1(list_players: list) -> list:
+def pairing_player_round_1(players: List[Player]) -> list:
     """
     Sort the list of players in descending order by their rank
     split this list into two list in half
@@ -99,25 +86,24 @@ def pairing_player_round_1(list_players: list) -> list:
     the player one of the second list...
     Get a list, with a pair of player in tuple.
 
-    :param list_players: list
+    :param players: list
     :return:list_pairs: list
     """
-    list_players_sorted = sort_descending_rank(list_players)
-    list_1, list_2 = split_list_player_round_1(list_players_sorted)
+    players_sorted = sort_descending_rank(players)
+    list_1, list_2 = split_list_player_round_1(players_sorted)
     list_pairs = []
-    for i in range(len(list_players) // 2):
+    for i in range(len(players) // 2):
         player_1 = list_1[i]
         player_2 = list_2[i]
         pair_player = (player_1, player_2)
-        # enlève joueur d'un potential opposant
+
+        # remove the player just added from his potential_opponent list
         player_1.potential_opponent.remove(player_2)
         player_2.potential_opponent.remove(player_1)
 
         list_pairs.append(pair_player)
 
-    # print(f"list_pairs pour round 1 : {list_pairs}")
-    return list_pairs  # exemple : [(<models.Player object at 0x108bd7dc0>, <models.Player object at 0x108bd7df0>),
-    # (<models.Player object at 0x108bd78b0>, <models.Player object at 0x108bd7d90>)]
+    return list_pairs
 
 
 def create_round(name: int, matches_round: list):
@@ -130,43 +116,44 @@ def create_round(name: int, matches_round: list):
     """
     created_date = datetime.datetime.now()
     new_round = Round(name, created_date, matches_round)
+
     return new_round
 
 
-def sort_descending_score(list_players: list) -> list:
+def sort_descending_score(players: list) -> list:
     """
     Get a list of players sorted by their score in a descending order
 
-    :param list_players: list
-    :return: list_players_score_sorted: list
+    :param players: list
+    :return: players_score_sorted: list
     """
-    list_players_score_sorted = sorted(
-        list_players, key=lambda player: player.score, reverse=True
+    players_score_sorted = sorted(
+        players, key=lambda player: player.score, reverse=True
     )
 
-    return list_players_score_sorted
+    return players_score_sorted
 
 
-def split_list_player_other_round(list_players: list) -> list:
+def split_list_player_other_round(players: list) -> tuple[list, list]:
     """
     Split in half a list of player into two list.
     This is for other rounds of the tournament.
 
-    :param list_players: list
-    :return: list_first_player, list_second_player: list
+    :param players: list
+    :return: list_first_player, list_second_player: tuple[list, list]
     """
     list_first_player = []
     list_second_player = []
-    for i in range(0, len(list_players), 2):
-        list_first_player.append(list_players[i])
+    for i in range(0, len(players), 2):
+        list_first_player.append(players[i])
 
-    for i in range(1, len(list_players), 2):
-        list_second_player.append(list_players[i])
+    for i in range(1, len(players), 2):
+        list_second_player.append(players[i])
 
     return list_first_player, list_second_player
 
 
-def pairing_player(list_players: list) -> list:
+def pairing_player(players: list) -> list:
     """
     Sort the list of players in descending order by their rank
     Sort the list of players in descending order by their score
@@ -176,12 +163,12 @@ def pairing_player(list_players: list) -> list:
     until a new pair is created.
     Get a list, with a pair of player in tuple.
 
-    :param list_players: list
+    :param players: list
     :return: list_pairs: list
     """
     list_pairs = []
 
-    list_sorted_rank = sort_descending_rank(list_players)
+    list_sorted_rank = sort_descending_rank(players)
     list_sorted = sort_descending_score(list_sorted_rank)
 
     for i, current_player in enumerate(list_sorted):
@@ -208,7 +195,7 @@ def pairing_player(list_players: list) -> list:
 def add_players(number_player: int):
     """
     Create a new instance from the class objet Player.
-    Fill the list list_players with this new instance.
+    Fill the list players with this new instance.
 
     :param number_player: int
 
@@ -222,21 +209,21 @@ def add_players(number_player: int):
             player_details["gender"],
             player_details["rank"],
         )
-        list_players.append(player)
+        players.append(player)
 
     # fill the list potential_opponent for all player
-    for player in list_players:
-        player.add_potential_opponents(list_players)
+    for player in players:
+        player.add_potential_opponents(players)
 
 
-def add_match(match_number: int, list_players: list):
+def add_match(match_number: int, players: list):
     """
     Create a new instance from the class objet Match.
     :param match_number: int
-    :param list_players: list
+    :param players: list
     :return: new_match models.Match
     """
-    new_match = Match(match_number, list_players)
+    new_match = Match(match_number, players)
     return new_match
 
 
@@ -276,13 +263,13 @@ def create_list_all_actor(list_archive: list) -> list:
     """
     list_all_actor = []
     for tournament in list_archive:
-        for player in tournament.list_players:
+        for player in tournament.players:
             list_all_actor.append(player)
 
     return list_all_actor
 
 
-def archive_tournament(new_tournament):
+def archive_tournament(new_tournament: Tournament):
     """
     Append a new tournament to the list_archive
     :param new_tournament: models.Tournament
@@ -290,14 +277,14 @@ def archive_tournament(new_tournament):
     list_archive.append(new_tournament)
 
 
-def update_list_players_tournament(list_players: list, tournament):
+def update_players_tournament(players: list, tournament: Tournament):
     """
-    Assign the value list_player to the variable tournament.list_players
-    :param list_players: list
+    Assign the value players to the variable tournament.players
+    :param players: list
     :param tournament: models.Tournament
 
     """
-    tournament.list_players = list_players
+    tournament.players = players
 
 
 def list_name_tournaments(list_archive: list):
@@ -327,10 +314,9 @@ def select_tournament():
     return user_choice
 
 
-def quit_programm():
+def quit_program():
     """
-    quit the programm
-
+    quit the program
     """
     os.system("clear")
     print("-" * 50)
@@ -347,7 +333,7 @@ def back_main_menu():
     user_action = display_sub_menu()
 
     if user_action == "2":
-        quit_programm()
+        quit_program()
 
     elif user_action == "1":
         os.system("clear")
@@ -358,25 +344,26 @@ def tournament_selected() -> str:
     return wich tournament the user have selected
     :return: tournament_selected: str
     """
+
     name_tournament = select_tournament()
     for tournament in list_archive:
         if tournament.name == name_tournament:
-            tournament_selected = tournament
+            tournament_choice = tournament
 
-    return tournament_selected
+    return tournament_choice
 
 
 def action_rapport_menu():
     """
-    nagigation/display in the rapport menu
+    nagigation/display the rapport menu
     """
     user_action = display_rapport_menu()
     if user_action == "1":
         os.system("clear")
         list_all_actor = create_list_all_actor(list_archive)
         list_ranking = sort_descending_rank(list_all_actor)
-        list_players_sorted_name = sort_name(list_all_actor)
-        display_order_name_all_actor(list_players_sorted_name)
+        players_sorted_name = sort_name(list_all_actor)
+        display_order_name_all_actor(players_sorted_name)
         display_order_rank_all_actor(list_ranking)
 
         back_main_menu()
@@ -386,9 +373,9 @@ def action_rapport_menu():
         display_all_tournament(sort_date(list_archive))
 
         tournament = tournament_selected()
-        list_ranking = sort_descending_rank(tournament.list_players)
-        list_players_sorted_name = sort_name(tournament.list_players)
-        display_order_name_player(list_players_sorted_name, tournament)
+        list_ranking = sort_descending_rank(tournament.players)
+        players_sorted_name = sort_name(tournament.players)
+        display_order_name_player(players_sorted_name, tournament)
         display_order_rank_player(list_ranking, tournament)
 
         back_main_menu()
@@ -405,6 +392,8 @@ def action_rapport_menu():
 
         tournament = tournament_selected()
         display_all_rounds(tournament, tournament.rounds)
+        list_ranking = sort_descending_score(tournament.players)
+        display_ranking_tournament(list_ranking, tournament)
 
         back_main_menu()
 
@@ -415,6 +404,8 @@ def action_rapport_menu():
         tournament = tournament_selected()
         list_all_matches = create_list_all_matches(tournament.rounds)
         display_all_match(tournament, list_all_matches)
+        list_ranking = sort_descending_score(tournament.players)
+        display_ranking_tournament(list_ranking, tournament)
 
         back_main_menu()
 
@@ -422,7 +413,7 @@ def action_rapport_menu():
         os.system("clear")
 
     elif user_action == "7":
-        quit_programm()
+        quit_program()
 
 
 def run():
@@ -447,43 +438,27 @@ def run():
             )
             display_tournament_created_message(new_tournament)
             add_players(NUMBER_PLAYER)
-            # print(list_players) # test --> [<models.Player object at 0x10100d900>,
-            # <models.Player object at 0x10100cdc0>,
-            # <models.Player object at 0x10100dab0>,
-            # <models.Player object at 0x10100f1f0>]
-            update_list_players_tournament(list_players, new_tournament)
-            display_player_created_message(list_players)
+
+            update_players_tournament(players, new_tournament)
+            display_player_created_message(players)
 
             for round_number in range(1, int(new_tournament.number_round) + 1):
                 if round_number == 1:
-                    list_pairs = pairing_player_round_1(list_players)
-                    # print(list_pairs) # test --> [(<models.Player object at 0x10100dab0>,
-                    #                                <models.Player object at 0x10100cdc0>),
-                    #                               (<models.Player object at 0x10100f1f0>,
-                    #                                <models.Player object at 0x10100d900>)]
+                    list_pairs = pairing_player_round_1(players)
 
                 else:
 
-                    list_pairs = pairing_player(list_players)
+                    list_pairs = pairing_player(players)
 
-                # print(f"list_pairs:{len({list_pairs})} {list_pairs}, pour le round: {round_number}")
-                # test -->
                 matches_round = []
                 for match_number, pair in enumerate(list_pairs):
-                    # print(f"match_number: {match_number}, pair: {pair}")
-                    # test --> match_number: 0, pair: (<models.Player object at 0x10100dab0>,
-                    # <models.Player object at 0x10100cdc0>)
                     match = add_match(match_number, pair)
-                    # print(f"match: {match}")  # test --> ex: <models.Match object at 0x10100ceb0>
+
                     matches_round.append(match)
-                    # print(f"matches_round: {matches_round}")
-                    # test --> ex: [<models.Match object at 0x10100ceb0>,
-                    # <models.Match object at 0x10100f1c0>]
+
                 round = create_round(round_number, matches_round)
-                # print(f"round: {round}")  # test --> <models.Round object at 0x10100da50>
+
                 new_tournament.rounds.append(round)
-                # print(f"new_tournament: {new_tournament}")
-                # test --> <models.Tournament object at 0x101093010>
 
                 if round.name == new_tournament.number_round:
 
@@ -493,7 +468,7 @@ def run():
 
                     archive_tournament(new_tournament)
                     display_round_results_message(matches_round, round)
-                    list_ranking = sort_descending_score(list_players)
+                    list_ranking = sort_descending_score(players)
                     display_ranking_tournament(list_ranking, new_tournament)
 
                     back_main_menu()
@@ -505,18 +480,12 @@ def run():
 
                     display_round_results_message(matches_round, round)
 
-                # print(f"matches_round :{matches_round}") # test --> ex: [<models.Match object at 0x100f7fee0>,
-                # <models.Match object at 0x100f7fe80>]
-            # print(f"test_round_matches_players: {matches_round[0].players}")
-            # test --> ex: [[<models.Player object at 0x102771000>],
-            # [<models.Player object at 0x102771030>]]
-
         elif user_action == "2":
             os.system("clear")
             action_rapport_menu()
 
         elif user_action == "3":
-            quit_programm()
+            quit_program()
 
 
 if __name__ == "__main__":

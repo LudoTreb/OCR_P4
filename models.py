@@ -1,3 +1,6 @@
+""" Models : All Models """
+
+
 class Player:
     potential_opponent = []
 
@@ -25,9 +28,6 @@ class Player:
     def full_name(self):
         return f"{self.last_name} {self.first_name}"
 
-    def played_with(self, player):  # pas utile mais à voir
-        pass
-
     def add_potential_opponents(self, list_player):
         list_copy = list_player.copy()
         list_copy.remove(self)
@@ -36,7 +36,7 @@ class Player:
 
 class Tournament:
     rounds = []
-    list_players = []
+    players = []
 
     def __init__(self, name, location, date, time_control, number_round=4):
         """
@@ -72,13 +72,13 @@ class Tournament:
 
 
 class Match:
-    def __init__(self, name, list_players):
+    def __init__(self, name, players):
         """
         Initialise le nom du match
         :param name:
         """
         self.name = name
-        self.players = [[i, 0] for i in list_players]
+        self.players = [[i, 0] for i in players]
 
     def __repr__(self):
         return str(self.players)

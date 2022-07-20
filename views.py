@@ -1,7 +1,6 @@
-""" Interface utilisateur terminal """
+""" Views : User Interface (terminal) """
 
 import datetime
-
 import os
 
 MESSAGE_INVALID = "Donnée invalide, veuillez saisir une donnée numérique"
@@ -42,14 +41,14 @@ def display_sub_menu() -> str:
     """
     sub_menu_action = ["1", "2"]
     sub_menu = """
-==================== SUBMENU =====================
+=================== SOUS-MENU ====================
 
 Choissisez parmi les actions suivante :
 
 1: Revenir au menu principal.
 2: Quitter
 
-Que souhaitez-vous faire : """
+--> Que souhaitez-vous faire : """
 
     user_action = input(sub_menu)
     if user_action not in sub_menu_action:
@@ -222,19 +221,19 @@ def display_tournament_created_message(new_tournament):
     print("-" * 50 + "\n" + "-" * 50)
 
 
-def display_player_created_message(list_player: list):
+def display_player_created_message(players: list):
     """
     Display the data of all player of a list
-    :param list_player:
+    :param players:
 
     """
     print("-" * 50)
     message = "Les joueurs ont bien été saisis \n"
     print(f"{message : ^50}")
 
-    for player in list_player:
+    for player in players:
         print(f"{player.first_name}, rank: {player.rank}, score: {player.score}")
-    # print("-" * 50 + "\n" + "-" * 50)
+
     print("-" * 50)
 
 
@@ -276,12 +275,10 @@ def enter_results(pair_player: list, rounds) -> list:
     message = f">> Round {rounds.name} en cours <<\n"
     print(f"{message : ^50}")
     print(
-        "⎮ Pour rappel des notations des scores :      ⎮\n⎮ victoire = 1  défaite = 0  match nul =  0.5 ⎮\n"
+        " ⎮ Pour rappel des notations des scores :      ⎮\n ⎮ victoire = 1  défaite = 0  match nul =  0.5 ⎮\n"
     )
 
     print("Veuillez rentrer le score du match : ")
-    # print(f"pair_player: {pair_player}")  # test --> [[<models.Player object at 0x10449c2b0>, 0],
-    # [<models.Player object at 0x10449c280>, 0]]
     print(f"{pair_player[0][0].last_name} contre {pair_player[1][0].last_name}\n")
     for player in pair_player:
         result_possibility = ["1", "0", "0.5", "0,5"]
@@ -301,10 +298,10 @@ def display_ranking_tournament(list_ranking: list, tournament):
     """
     print("\n==================== RESULTATS ===================\n")
     print(f"{tournament.date},\n{tournament.name}\n")
-    print(f"{'N°' : <3} {'Joueur' : ^15} {'Score' : >5}")
+    print(f"{'N°' : <3} {'Joueur' : ^15} {'Score' : >3}")
 
     for i, player in enumerate(list_ranking):
-        print(f"{i + 1 : <3} {player.last_name : ^15} {player.score : >5}")
+        print(f"{i + 1 : <3} {player.last_name : ^15} {player.score : >3}")
 
 
 def display_order_rank_player(list_ranking: list, tournament):
@@ -343,11 +340,11 @@ def display_order_rank_all_actor(list_ranking: list):
     print("-" * 50)
 
 
-def display_order_name_player(list_players_sorted_name: list, tournament):
+def display_order_name_player(players_sorted_name: list, tournament):
     """
     Display all players of all tournament ordered by their name.
 
-    :param list_players_sorted_name: list
+    :param players_sorted_name: list
     :param tournament: models.Tournament
     """
     print("\n================= Joueur par Nom =================\n")
@@ -357,16 +354,16 @@ def display_order_name_player(list_players_sorted_name: list, tournament):
     print(f"{'N°' : <3} {'Joueurs' : ^30} {'Rank' : >5}")
     print("-" * 50)
 
-    for i, player in enumerate(list_players_sorted_name):
+    for i, player in enumerate(players_sorted_name):
         print(f"{i + 1 : <3} {player.full_name : ^30} {player.rank : >5}")
     print("-" * 50)
 
 
-def display_order_name_all_actor(list_players_sorted_name: list):
+def display_order_name_all_actor(players_sorted_name: list):
     """
     Display all actor of all tournament ordered by their name.
 
-    :param list_players_sorted_name: list
+    :param players_sorted_name: list
     """
     print("\n================= Joueur par Nom =================\n")
 
@@ -374,7 +371,7 @@ def display_order_name_all_actor(list_players_sorted_name: list):
     print(f"{'N°' : <3} {'Joueurs' : ^30} {'Rank' : >5}")
     print("-" * 50)
 
-    for i, player in enumerate(list_players_sorted_name):
+    for i, player in enumerate(players_sorted_name):
         print(f"{i + 1 : <3} {player.full_name : ^30} {player.rank : >5}")
     print("-" * 50)
 
