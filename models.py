@@ -1,4 +1,7 @@
 """ Models : All Models """
+from tinydb import TinyDB
+
+db = TinyDB('db.json')
 
 
 class Player:
@@ -20,6 +23,12 @@ class Player:
         self.gender = gender
         self.rank = rank
         self.score = score
+
+        # sauvegarde base de donnée
+        players = db.table('players')
+        players.insert({'last_name': last_name,
+                        'first_name': first_name,
+                        "birth_date": birth_date, "gender": gender, "rank": rank, "score": score})
 
     def __repr__(self):
         return str(self.last_name)
