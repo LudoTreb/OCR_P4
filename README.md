@@ -19,7 +19,7 @@ pip install -r requirements.txt
 Run this command:  
 
 ```
-python3 controllers.py
+python3 main.py
 ```    
 ## How to use it
 
