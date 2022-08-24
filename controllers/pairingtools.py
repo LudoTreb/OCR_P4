@@ -4,15 +4,16 @@ from models import Player
 
 
 class PairingTools:
-
     def sort_descending_rank(self, players: List[Player]) -> list:
         """
-        Get a list of players sorted by their rank in a descending order
+        Get a list of players_1 sorted by their rank in a descending order
 
         :param players: list
         :return: players_rank_sorted: list
         """
-        players_rank_sorted = sorted(players, key=lambda player: player.rank, reverse=True)
+        players_rank_sorted = sorted(
+            players, key=lambda player: player.rank, reverse=True
+        )
         return players_rank_sorted
 
     def split_list_player_round_1(self, players: List[Player]) -> tuple[list, list]:
@@ -34,7 +35,7 @@ class PairingTools:
 
     def sort_descending_score(self, players: List[Player]) -> list:
         """
-        Get a list of players sorted by their score in a descending order
+        Get a list of players_1 sorted by their score in a descending order
 
         :param players: list
         :return: players_score_sorted: list

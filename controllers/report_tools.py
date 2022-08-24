@@ -2,11 +2,22 @@ import datetime
 
 from typing import List
 
-from archive import list_archive
+
 from models import Tournament, Player
 
 
 class ReportTools:
+    def sort_descending_rank(self, players: List[Player]) -> list:
+        """
+        Get a list of players_1 sorted by their rank in a descending order
+
+        :param players: list
+        :return: players_rank_sorted: list
+        """
+        players_rank_sorted = sorted(
+            players, key=lambda player: player.rank, reverse=True
+        )
+        return players_rank_sorted
 
     def sort_date(self, tournaments: List[Tournament]) -> list:
         """
@@ -17,7 +28,9 @@ class ReportTools:
         """
         list_tournaments_date_sorted = sorted(
             tournaments,
-            key=lambda tournament: datetime.datetime.strptime(tournament.date, "%d/%m/%Y"),
+            key=lambda tournament: datetime.datetime.strptime(
+                tournament.date, "%d/%m/%Y"
+            ),
             reverse=True,
         )
         return list_tournaments_date_sorted
@@ -48,7 +61,7 @@ class ReportTools:
 
     def create_list_all_actor(self, list_archive: List[Tournament]) -> list:
         """
-        Create a list of all player of a tounament
+        Create a list of all player of a tournament
         :param list_archive: list
         :return: list_all_actor: list
         """
@@ -59,12 +72,17 @@ class ReportTools:
 
         return list_all_actor
 
-    def archive_tournament(self, new_tournament: Tournament):
+    def sort_descending_score(self, players: List[Player]) -> list:
         """
-        Append a new tournament to the list_archive
-        :param new_tournament: models.Tournament
+        Get a list of players sorted by their score in a descending order
+        :param players: list
+        :return: players_score_sorted: list
         """
-        list_archive.append(new_tournament)
+        players_score_sorted = sorted(
+            players, key=lambda player: player.score, reverse=True
+        )
+
+        return players_score_sorted
 
     def list_name_tournaments(self, list_archive: List[Tournament]) -> list:
         """

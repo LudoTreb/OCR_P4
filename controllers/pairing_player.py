@@ -7,11 +7,10 @@ pairing_tools = PairingTools()
 
 
 class PairingPlayerController:
-
     @staticmethod
     def pairing_player_round_1(players: List[Player]) -> list:
         """
-        Sort the list of players in descending order by their rank
+        Sort the list of players_1 in descending order by their rank
         split this list into two list in half
         associate the player one of the first list with
         the player one of the second list...
@@ -39,8 +38,8 @@ class PairingPlayerController:
     @staticmethod
     def pairing_player(players: List[Player]) -> list:
         """
-        Sort the list of players in descending order by their rank
-        Sort the list of players in descending order by their score
+        Sort the list of players_1 in descending order by their rank
+        Sort the list of players_1 in descending order by their score
 
         associate the first player of the list with the second player.
         If this pair already exists, the first player is associate to the third player...
@@ -56,7 +55,7 @@ class PairingPlayerController:
         list_sorted = pairing_tools.sort_descending_score(list_sorted_rank)
 
         for i, current_player in enumerate(list_sorted):
-            list_next_player = list_sorted[i + 1:len(list_sorted)]
+            list_next_player = list_sorted[i + 1: len(list_sorted)]
 
             for next_player in list_next_player:
                 if next_player in current_player.potential_opponent:

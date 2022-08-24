@@ -1,7 +1,9 @@
 """ Models : All Models """
 from tinydb import TinyDB
 
-db = TinyDB('db.json')
+db = TinyDB("chess_db.json")
+tournaments_table = db.table("tournaments")
+players_table = db.table("players")
 
 
 class Player:
@@ -24,12 +26,6 @@ class Player:
         self.rank = rank
         self.score = score
 
-        # sauvegarde base de donnée
-        players = db.table('players')
-        players.insert({'last_name': last_name,
-                        'first_name': first_name,
-                        "birth_date": birth_date, "gender": gender, "rank": rank, "score": score})
-
     def __repr__(self):
         return str(self.last_name)
 
@@ -46,6 +42,8 @@ class Player:
 class Tournament:
     rounds = []
     players = []
+    tournaments_archive = []
+    players_archive = []
 
     def __init__(self, name, location, date, time_control, number_round=4):
         """
@@ -72,12 +70,19 @@ class Tournament:
         """
         pass
 
-    def historic_tournament(self):
+    def archive_tournament(self, tournament_archive_instancing: list) -> list:
         """
         Affiche l'historique du tournoi en cours
         :return:
         """
-        pass
+        self.tournaments_archive.append(tournament_archive_instancing)
+
+    def archive_player(self, players_archive_instancing: list) -> list:
+        """
+        Affiche l'historique du tournoi en cours
+        :return:
+        """
+        self.players_archive.append(players_archive_instancing)
 
 
 class Match:

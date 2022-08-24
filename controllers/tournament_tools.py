@@ -1,14 +1,15 @@
 import datetime
 from typing import List
+from tinydb import Query
 
-from models import Player, Tournament, Round, Match
-from views import DisplayPlayerView
+from models import Player, Tournament, Round, Match, players_table
+from views.player_view import DisplayPlayerView
+
 
 new_tournament = None
 
 
 class TournamentToolsController:
-
     def create_round(self, name: int, matches_round: list):
         """
         Create a new instance from a class objet Round.
@@ -25,7 +26,7 @@ class TournamentToolsController:
     def add_players(self, number_player: int) -> list:
         """
         Create a new instance from the class objet Player.
-        Fill the list players with this new instance.
+        Fill the list players_1 with this new instance.
 
         :param number_player: int
 
@@ -48,7 +49,6 @@ class TournamentToolsController:
 
         return players
 
-
     def add_match(self, match_number: int, players: List[Player]):
         """
         Create a new instance from the class objet Match.
@@ -64,16 +64,24 @@ class TournamentToolsController:
         Update the score attribute of a player.
         :param pair_player:
         """
+        Players = Query()
+
         for player in pair_player:
             if player[1] == "0,5":
                 score_in_dot = player[1].replace(",", ".")
                 player[0].score += float(score_in_dot)
+                players_table.update(
+                    {"score": player[0].score}, Players.last_name == player[0].last_name
+                )  # update the db player's score
             else:
                 player[0].score += float(player[1])
+                players_table.update(
+                    {"score": player[0].score}, Players.last_name == player[0].last_name
+                )  # update the db player's score
 
     def update_players_tournament(self, players: List[Player], tournament: Tournament):
         """
-        Assign the value players to the variable tournament.players
+        Assign the value players_1 to the variable tournament.players_1
         :param players: list
         :param tournament: models.Tournament
 

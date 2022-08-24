@@ -1,15 +1,13 @@
 import os
 import sys
 
-from archive import list_archive
-from controllers.report_tools import ReportTools
-from views import DisplayMenuView
+from typing import List
+from models import Tournament
 
-report_tools = ReportTools()
+from views.main_menu_view import DisplayMenuView
 
 
 class NavigationController:
-
     def quit_program(self):
         """
         quit the program
@@ -33,29 +31,30 @@ class NavigationController:
         elif user_action == "1":
             os.system("clear")
 
-    def tournament_selected(self) -> str:
+    def select_tournament(self, tournaments: list) -> int:
         """
-        return wich tournament the user have selected
-        :return: tournament_selected: str
+        Ask the user to choose a name of a tournament
+        :param tournaments:
+        :return: choice_tournament: int
         """
+        choice_possibility_tournament = []
+        for i in range(len(tournaments)):
+            choice_possibility_tournament.append(i + 1)
 
-        name_tournament = self.select_tournament()
-        for tournament in list_archive:
-            if tournament.name == name_tournament:
-                tournament_choice = tournament
+        choice_tournament = int(input("choisir un tournoi (n°): "))
+        while choice_tournament not in choice_possibility_tournament:
+            choice_tournament = int(input("non valide. Choix un numéro de tournoi"))
 
-        return tournament_choice
+        return choice_tournament
 
-    def select_tournament(self):
+    def tournament_selected(
+        self, choice_tournament: int, tournaments_archive: List[Tournament]
+    ) -> list:
         """
-        Ask to user to choose a name of a tournament
-        :return: user_choice: str
+        by the index a tournament is choose in a list of tournament
+        :param choice_tournament: int
+        :param tournaments_archive: list
+        :return: tournament_selected: list (one tournament)
         """
-        choice_possibility = report_tools.list_name_tournaments(list_archive)
-        user_choice = input("--> Veuillez choisir un nom de tournoi (copier/coller) : ")
-        while user_choice not in choice_possibility:
-            user_choice = input(
-                "Choix non valide.\nSelectionner le nom d'un tournoi (copier/coller) : "
-            )
-
-        return user_choice
+        tournament_selected = tournaments_archive[choice_tournament - 1]
+        return tournament_selected

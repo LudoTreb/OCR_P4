@@ -4,12 +4,14 @@ from constances import NUMBER_PLAYER
 from controllers.tournament_tools import TournamentToolsController
 from controllers.action_report import action_report_menu
 from controllers.navigation import NavigationController
-from controllers.report_tools import ReportTools
+
 from controllers.pairingtools import PairingTools
 from controllers.pairing_player import PairingPlayerController
-
-from models import Tournament
-from views import DisplayTournamentView, DisplayMenuView, DisplayPlayerView
+from controllers.serialized import SerializedController
+from models import Tournament, tournaments_table, players_table
+from views.tournament_view import DisplayTournamentView
+from views.main_menu_view import DisplayMenuView
+from views.player_view import DisplayPlayerView
 
 new_tournament = None
 players = []
@@ -22,7 +24,9 @@ def run():
     Go to the report.
     Quit the program.
     """
-    report_tools = ReportTools()
+
+    serialized = SerializedController()
+
     tournament_tools = TournamentToolsController()
     tournament_view = DisplayTournamentView()
     pairing_tools = PairingTools()
@@ -72,10 +76,19 @@ def run():
                         tournament_view.enter_results(match.players, round)
                         tournament_tools.update_player_score(match.players)
 
-                    report_tools.archive_tournament(new_tournament)
+                    # sauvegarde tinydb
+                    serialized_tournaments = serialized.serialized_tournament(
+                        new_tournament
+                    )
+                    tournaments_table.insert_multiple(serialized_tournaments)
+                    serialized_players = serialized.serialized_player(players)
+                    players_table.insert_multiple(serialized_players)
+
                     tournament_view.display_round_results_message(matches_round, round)
                     list_ranking = pairing_tools.sort_descending_score(players)
-                    tournament_view.display_ranking_tournament(list_ranking, new_tournament)
+                    tournament_view.display_ranking_tournament(
+                        list_ranking, new_tournament
+                    )
 
                     navigation.back_main_menu()
 
@@ -89,6 +102,8 @@ def run():
         elif user_action == "2":
             os.system("clear")
             action_report_menu()
+
+            navigation.back_main_menu()
 
         elif user_action == "3":
             navigation.quit_program()
