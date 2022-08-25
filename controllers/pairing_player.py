@@ -1,6 +1,6 @@
 from typing import List
 
-from controllers.pairingtools import PairingTools
+from controllers.pairing_tools import PairingTools
 from models import Player
 
 pairing_tools = PairingTools()

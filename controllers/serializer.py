@@ -2,8 +2,9 @@ from typing import List
 from models import Player, Tournament, Round, Match
 
 
-class SerializedController:
-    def serialized_player(self, players: List[Player]) -> list:
+class SerializerController:
+
+    def serialized_players(self, players: List[Player]) -> list:
         """
         serialize players
         :param players: players: list
@@ -63,7 +64,7 @@ class SerializedController:
         for round in rounds:
             serialized_round = {
                 "round_number": round.name,
-                # "date": round.date,
+
                 "matches_round": self.serialized_match(round.matches_round),
             }
             serialized_rounds.append(serialized_round)
@@ -82,14 +83,14 @@ class SerializedController:
             "time_control": new_tournament.time_control,
             "number_round": new_tournament.number_round,
             "rounds": self.serialized_round(new_tournament.rounds),
-            "players": self.serialized_player(new_tournament.players),
+            "players": self.serialized_players(new_tournament.players),
         }
         serialized_tournaments = [serialized_tournament]
 
         return serialized_tournaments
 
 
-class InstancingSerializedController:
+class DeserializerController:
     def instancing_serialized_player(self, serialized_players: List[dict]) -> list:
         """
         Instancing a list of serialized players
@@ -119,7 +120,7 @@ class InstancingSerializedController:
         return instantiate_serialized_players
 
     def instancing_serialized_match_players(
-        self, serialized_matches_player: List[dict]
+            self, serialized_matches_player: List[dict]
     ) -> list:
         """
         Instancing a list of serialized match player
@@ -171,7 +172,7 @@ class InstancingSerializedController:
 
             round_convert = Round(
                 name=round_number,
-                date=None,  # problème de convertion depuis la serialization format date .json
+                date=None,
                 matches_round=matches_round,
             )
             instantiate_serialized_rounds.append(round_convert)
@@ -179,7 +180,7 @@ class InstancingSerializedController:
         return instantiate_serialized_rounds
 
     def instancing_serialized_tournament(
-        self, serialized_tournaments: List[dict]
+            self, serialized_tournaments: List[dict]
     ) -> list:
         """
         Instancing a list of serialized tournaments

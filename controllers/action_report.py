@@ -1,9 +1,9 @@
 import os
 
 from controllers.navigation import NavigationController
-from controllers.serialized import InstancingSerializedController
+from controllers.serializer import DeserializerController
 from controllers.report_tools import ReportTools
-from controllers.pairingtools import PairingTools
+from controllers.pairing_tools import PairingTools
 from models import tournaments_table, players_table
 from views.tournament_view import DisplayTournamentView
 from views.report_view import DisplayReportView
@@ -14,7 +14,7 @@ report_tools = ReportTools()
 navigation = NavigationController()
 pairing_tools = PairingTools()
 tournament_view = DisplayTournamentView()
-instancing_serialized = InstancingSerializedController()
+instancing_serialized = DeserializerController()
 
 
 def action_report_menu():

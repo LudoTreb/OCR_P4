@@ -5,9 +5,9 @@ from controllers.tournament_tools import TournamentToolsController
 from controllers.action_report import action_report_menu
 from controllers.navigation import NavigationController
 
-from controllers.pairingtools import PairingTools
+from controllers.pairing_tools import PairingTools
 from controllers.pairing_player import PairingPlayerController
-from controllers.serialized import SerializedController
+from controllers.serializer import SerializerController
 from models import Tournament, tournaments_table, players_table
 from views.tournament_view import DisplayTournamentView
 from views.main_menu_view import DisplayMenuView
@@ -25,7 +25,7 @@ def run():
     Quit the program.
     """
 
-    serialized = SerializedController()
+    serialized = SerializerController()
 
     tournament_tools = TournamentToolsController()
     tournament_view = DisplayTournamentView()
@@ -81,7 +81,7 @@ def run():
                         new_tournament
                     )
                     tournaments_table.insert_multiple(serialized_tournaments)
-                    serialized_players = serialized.serialized_player(players)
+                    serialized_players = serialized.serialized_players(players)
                     players_table.insert_multiple(serialized_players)
 
                     tournament_view.display_round_results_message(matches_round, round)
